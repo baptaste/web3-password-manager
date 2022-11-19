@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
@@ -20,7 +20,7 @@ function App() {
 					plainTextPassword: passwordRef.current.value
 				}
 				const res = await axios.post('http://localhost:3500/send-password', data)
-				console.log('CLIENT - res:', res)
+				console.log('CLIENT - handleSubmit res:', res)
 				setHash(res.data.hash)
 				setPasswordName(res.data.name)
 
@@ -31,6 +31,15 @@ function App() {
 			console.error(error)
 		}
 	}
+
+	async function getPasswordsCount() {
+		const res = await axios.get('http://localhost:3500/password-count')
+		console.log('CLIENT - getPasswordsCount res:', res)
+	}
+
+	useEffect(() => {
+		getPasswordsCount()
+	}, [])
 
 	return (
 		<div className='App w-full h-screen flex flex-col items-center justify-center bg-slate-900 text-slate-100'>

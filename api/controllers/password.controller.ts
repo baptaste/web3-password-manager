@@ -1,4 +1,6 @@
 import { hashPassword } from '../helpers/hash'
+import { v4 as uuid } from 'uuid'
+import { getPasswordCount } from '../contract/methods'
 
 export const passwordController = {
 	hash: async (req: Express.Request, res: Express.Response) => {
@@ -12,7 +14,13 @@ export const passwordController = {
 		}
 
 		const hash = await hashPassword(plainTextPassword)
+		const randomId = uuid()
+
 		console.log('API - hash:', hash)
 		res.json({ hash, name: passwordName })
+	},
+	getCount: async (req: Express.Request, res: Express.Response) => {
+		const count = await getPasswordCount()
+		res.json({ passwordCount: count })
 	}
 }
