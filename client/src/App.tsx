@@ -21,8 +21,8 @@ function App() {
 				}
 				const res = await axios.post('http://localhost:3500/send-password', data)
 				console.log('CLIENT - handleSubmit res:', res)
-				setHash(res.data.hash)
-				setPasswordName(res.data.name)
+				// setHash(res.data.hash)
+				// setPasswordName(res.data.name)
 
 				passwordNameRef.current.value = ''
 				passwordRef.current.value = ''
@@ -36,6 +36,11 @@ function App() {
 		const res = await axios.get('http://localhost:3500/password-count')
 		console.log('CLIENT - getPasswordsCount res:', res)
 	}
+
+	// async function getPasswordHash() {
+	// 	const res = await axios.post('http://localhost:3500/password-hash', )
+	// 	console.log('CLIENT - getPasswordsCount res:', res)
+	// }
 
 	useEffect(() => {
 		getPasswordsCount()
