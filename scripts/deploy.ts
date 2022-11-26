@@ -5,8 +5,9 @@ import fs from 'fs'
 async function main() {
 	const PasswordFactoryContract = await ethers.getContractFactory('PasswordFactory')
 	const contract = await PasswordFactoryContract.deploy()
-	// await contract.deployed()
+	await contract.deployed()
 	fs.writeFileSync('artifacts/contract-address.json', JSON.stringify(contract.address))
+	fs.writeFileSync('.env', JSON.stringify({ LAST_DEPLOYED_ADDRESS: contract.address }))
 	console.log('PasswordFactory contract successfully deployed at following address:', contract.address)
 }
 

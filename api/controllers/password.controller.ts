@@ -20,14 +20,19 @@ export const passwordController = {
 		await sendPasswordToContract(hash, randomId)
 
 		console.log('API - hash:', hash)
-		res.json({ hash, name: passwordName })
+		res.json({ name: passwordName, hashId: randomId })
+	},
+	getPasswordHash: async (req: Express.Request, res: Express.Response) => {
+		const { hashId } = req.body
+		console.log('API - getPasswordHash req.body hashId:', hashId)
+		const passwordHash = await getPasswordHashFromContract(hashId)
+		console.log('API - getPasswordHash returned hash from contract:', passwordHash)
+		res.json({ passwordHash })
 	},
 	getCount: async (req: Express.Request, res: Express.Response) => {
 		const count = await getPasswordCount()
+		console.log('API - getPasswordCount:', count)
+
 		res.json({ passwordCount: count })
-	},
-	getPasswordHash: async (req: Express.Request, res: Express.Response) => {
-		const passwordHash = await getPasswordHashFromContract(req.body.hashId)
-		res.json({ hashId: passwordHash })
 	}
 }

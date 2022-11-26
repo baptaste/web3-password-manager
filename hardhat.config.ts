@@ -21,7 +21,6 @@ const config: HardhatUserConfig = {
 	// defaultNetwork: 'goerli',
 	defaultNetwork: 'polygon_mumbai',
 	// defaultNetwork: 'matic',
-
 	networks: {
 		hardhat: {
 			// 	chainId: 31337
@@ -36,6 +35,7 @@ const config: HardhatUserConfig = {
 		polygon_mumbai: {
 			url: ALCHEMY_POLYGON_HTTP_API_URL,
 			accounts: [`0x${METAMASK_ACCOUNT1_PRIVATE_KEY}`],
+			allowUnlimitedContractSize: true
 			// gasPrice: 8000000000
 		}
 

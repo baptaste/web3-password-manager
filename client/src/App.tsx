@@ -4,13 +4,15 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 function App() {
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
-	const [hash, setHash] = useState<string>('')
+	const [passwordHash, setPasswordHash] = useState<string>('')
+	const [hashId, setHashId] = useState<string>('')
 	const [passwordName, setPasswordName] = useState<string>('')
 
 	const passwordNameRef = useRef()
 	const passwordRef = useRef()
+	const hashIdRef = useRef()
 
-	async function handleSubmit(e: any) {
+	async function handleCreatePasswordSubmit(e: any) {
 		e.preventDefault()
 
 		try {
@@ -21,11 +23,24 @@ function App() {
 				}
 				const res = await axios.post('http://localhost:3500/send-password', data)
 				console.log('CLIENT - handleSubmit res:', res)
-				// setHash(res.data.hash)
-				// setPasswordName(res.data.name)
-
+				setHashId(res.data.hashId)
 				passwordNameRef.current.value = ''
 				passwordRef.current.value = ''
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async function handleGetHashSubmit(e: any) {
+		e.preventDefault()
+
+		try {
+			if (hashIdRef.current) {
+				const res = await axios.post('http://localhost:3500/password-hash', { hashId: hashIdRef.current.value })
+				console.log('CLIENT - handleGetHashIdSubmit res:', res)
+				setPasswordHash(res.data.passwordHash)
+				hashIdRef.current.value = ''
 			}
 		} catch (error) {
 			console.error(error)
@@ -37,18 +52,37 @@ function App() {
 		console.log('CLIENT - getPasswordsCount res:', res)
 	}
 
-	// async function getPasswordHash() {
-	// 	const res = await axios.post('http://localhost:3500/password-hash', )
-	// 	console.log('CLIENT - getPasswordsCount res:', res)
-	// }
-
 	useEffect(() => {
 		getPasswordsCount()
 	}, [])
 
 	return (
 		<div className='App w-full h-screen flex flex-col items-center justify-center bg-slate-900 text-slate-100'>
-			<form onSubmit={handleSubmit} className='w-1/3 h-1/2 m-auto flex flex-col items-center'>
+			<form onSubmit={handleGetHashSubmit} className='HashIdForm w-2/3 h-auto m-6 flex flex items-center justify-between'>
+				<div className='inputContainer w-1/2 flex flex-col items-center justify-between my-4 py-3'>
+					<label htmlFor='hashId' className='w-full mb-3 text-left text-2xl'>
+						Hash ID
+					</label>
+					<div className='w-full flex items-center justify-between'>
+						<input
+							ref={hashIdRef}
+							name='hashId'
+							type='text'
+							placeholder='Enter ID'
+							className='w-full h-full rounded-md p-4 text-slate-900'
+						/>
+					</div>
+				</div>
+				<button
+					type='submit'
+					className='w-1/3  py-3 mt-12 rounded-md bg-green-700 text-slate-100 cursor-pointer'
+					// disabled={!hashIdRef?.current?.value}
+				>
+					Get hash id
+				</button>
+			</form>
+
+			<form onSubmit={handleCreatePasswordSubmit} className='CreatePasswordForm w-1/3 h-1/2 m-auto flex flex-col items-center'>
 				<div className='inputContainer w-full flex flex-col items-center justify-between my-4 py-3'>
 					<label htmlFor='name' className='w-full mb-3 text-left text-2xl'>
 						Name
@@ -96,7 +130,7 @@ function App() {
 				</button>
 
 				{passwordName.length > 0 ? <h2 className='text-2xl text-slate-300'>Password name : {passwordName}</h2> : null}
-				{hash.length > 0 ? <h2 className='text-2xl text-red-500'>Hash : {hash}</h2> : null}
+				{passwordHash.length > 0 ? <h2 className='text-2xl text-red-500'>Stored hash : {passwordHash}</h2> : null}
 			</form>
 		</div>
 	)

@@ -19,6 +19,7 @@
 		"@nomiclabs/hardhat-waffle": "^2.0.3",
 		"@openzeppelin/contracts": "^4.8.0",
 		"@typechain/hardhat": "^6.1.4",
+		"alchemy-sdk": "^2.2.3",
 		"axios": "^1.1.3",
 		"bcrypt": "^5.1.0",
 		"chai": "^4.3.7",

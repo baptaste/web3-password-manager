@@ -10,7 +10,7 @@ router.get('/', (_, res) => {
 
 router.get('/password-count', passwordController.getCount)
 
-router.get('/password-hash', passwordController.getPasswordHash)
+router.post('/password-hash', passwordController.getPasswordHash)
 
 router.post('/send-password', passwordController.hash)
 
