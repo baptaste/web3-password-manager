@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { getContract } from './interact'
+import { getContract } from './config'
 
 export async function getPasswordCount(): Promise<number> {
 	let count: number = 0
