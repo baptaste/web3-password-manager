@@ -31,8 +31,6 @@ export const passwordController = {
 	},
 	getCount: async (req: Express.Request, res: Express.Response) => {
 		const count = await getPasswordCount()
-		console.log('API - getPasswordCount:', count)
-
 		res.json({ passwordCount: count })
 	}
 }

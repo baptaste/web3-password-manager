@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers'
-import { getContract } from '.'
+import { getContract } from './interact'
 
-export async function getPasswordCount(): Promise<string> {
-	let count: string = ''
+export async function getPasswordCount(): Promise<number> {
+	let count: number = 0
 
 	try {
 		const contract = await getContract()
@@ -10,10 +10,8 @@ export async function getPasswordCount(): Promise<string> {
 		if (contract) {
 			const data: BigNumber = await contract.passwordsCount()
 			const countInHex: string = data._hex
-			count = countInHex.replace(/0x0/i, '')
-			console.log('------------- API, getPasswordCount, count:', count)
+			count = Number(countInHex.replace(/0x0/i, ''))
 		}
-
 	} catch (error) {
 		console.error(error)
 	}
@@ -25,12 +23,12 @@ export async function sendPasswordToContract(hash: string, id: string): Promise<
 		const contract = await getContract()
 
 		if (contract) {
-		const transaction = await contract.storePassword(hash, id)
-		await transaction.wait()
-		console.log('sendPasswordToContract, all good')
+			const transaction = await contract.storePassword(hash, id)
+			await transaction.wait()
+			console.log('sendPasswordToContract, all good')
 		}
 	} catch (error) {
-		console.error('sendPasswordToContract, CATCH ERROR:', error)
+		console.error('sendPasswordToContract, error:', error)
 	}
 }
 

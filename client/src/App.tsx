@@ -7,6 +7,7 @@ function App() {
 	const [passwordHash, setPasswordHash] = useState<string>('')
 	const [hashId, setHashId] = useState<string>('')
 	const [passwordName, setPasswordName] = useState<string>('')
+	const [passwordCount, setPasswordCount] = useState<number>(0)
 
 	const passwordNameRef = useRef()
 	const passwordRef = useRef()
@@ -50,6 +51,7 @@ function App() {
 	async function getPasswordsCount() {
 		const res = await axios.get('http://localhost:3500/password-count')
 		console.log('CLIENT - getPasswordsCount res:', res)
+		setPasswordCount(res.data.passwordCount)
 	}
 
 	useEffect(() => {
@@ -58,6 +60,8 @@ function App() {
 
 	return (
 		<div className='App w-full h-screen flex flex-col items-center justify-center bg-slate-900 text-slate-100'>
+			<h2 className='text-2xl text-red-500'>Total stored passwords: {passwordCount}</h2>
+
 			<form onSubmit={handleGetHashSubmit} className='HashIdForm w-2/3 h-auto m-6 flex flex items-center justify-between'>
 				<div className='inputContainer w-1/2 flex flex-col items-center justify-between my-4 py-3'>
 					<label htmlFor='hashId' className='w-full mb-3 text-left text-2xl'>
@@ -78,7 +82,7 @@ function App() {
 					className='w-1/3  py-3 mt-12 rounded-md bg-green-700 text-slate-100 cursor-pointer'
 					// disabled={!hashIdRef?.current?.value}
 				>
-					Get hash id
+					Get password hash
 				</button>
 			</form>
 

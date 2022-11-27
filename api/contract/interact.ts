@@ -1,23 +1,20 @@
 import { abi } from './abi.json'
-import { Network, Alchemy, Wallet, Utils, Contract, AlchemyProvider } from 'alchemy-sdk';
-// import { hre } from 'hardhat'
+import { Network, Alchemy, Wallet, Contract, AlchemyProvider } from 'alchemy-sdk'
 
 const { ALCHEMY_POLYGON_API_KEY, CONTRACT_ADDRESS, METAMASK_ACCOUNT1_PRIVATE_KEY } = process.env
 
-const settings = {
-    apiKey: ALCHEMY_POLYGON_API_KEY,
-    network: Network.MATIC_MUMBAI,
-};
+const alchemySettings = {
+	apiKey: ALCHEMY_POLYGON_API_KEY,
+	network: Network.MATIC_MUMBAI
+}
 
-const alchemy = new Alchemy(settings);
+const alchemy = new Alchemy(alchemySettings)
 
 const NETWORK: string = 'matic' // ex: matic | goerli
 
 const ADDRESS: string = CONTRACT_ADDRESS ?? '' // ex: 0xNNNNNN...NNN
 
 const WALLET_PRIVATE_KEY: string = `0x${METAMASK_ACCOUNT1_PRIVATE_KEY}` ?? '' // ex: 0xNNNNNN...NNN
-
-const wallet = new Wallet(WALLET_PRIVATE_KEY);
 
 // Returns Alchemy Provider
 async function _getProvider(): Promise<AlchemyProvider | null> {
@@ -26,38 +23,30 @@ async function _getProvider(): Promise<AlchemyProvider | null> {
 	try {
 		provider = await alchemy.config.getProvider()
 	} catch (error) {
-		console.error(error);
+		console.error(error)
 	}
 
 	return provider
 }
 
 // Returns Signer
-async function _getSigner(): Promise<any> {
-	let signer = null
-
-	try {
-		const provider = await _getProvider()
-
-		if (provider) {
-			signer = provider.getSigner(ADDRESS)
-		}
-	} catch (error) {
-		console.error(error);
-	}
-
-	return signer
+function _getSigner(): Wallet {
+	return new Wallet(WALLET_PRIVATE_KEY, alchemy)
 }
 
 // Returns Contract
 export async function getContract(): Promise<Contract | null> {
 	let contract = null
-	const signer = await _getSigner()
+	const signer = _getSigner()
 
 	if (signer) {
 		contract = new Contract(ADDRESS, abi, signer)
-		const owner = await contract.owner();
-		console.log('getContract, owner:', owner);
+		const ownerAddress = await contract.owner()
+
+		if (ownerAddress) {
+			const isCallerOwner: boolean = signer.address === ownerAddress
+			console.log('isCallerOwner:', isCallerOwner)
+		}
 	}
 
 	return contract

@@ -4,7 +4,7 @@ dotenv.config()
 import express from 'express'
 import cors, { CorsOptions } from 'cors'
 import router from './api/routes/router'
-import { getContract, verifyContractDeployed } from './api/contract'
+import { verifyContractDeployed } from './api/contract/interact'
 
 const app = express()
 const PORT = process.env.PORT || 3500
@@ -22,12 +22,8 @@ app.use(cors(options))
 app.use(router)
 
 async function start() {
-	const contract = await getContract()
-	// const res = await verifyContractDeployed() // returns 0x ...
-	// console.log('------------- contract passwordsCount:', await contract?.functions.passwordsCount())
-	const deployed = await verifyContractDeployed()
-	console.log(deployed);
-
+	const verifiedContract = await verifyContractDeployed()
+	console.log('Contract deployed:', verifiedContract.deployed)
 }
 
 app.listen(PORT, () => {
