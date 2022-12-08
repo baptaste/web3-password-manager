@@ -1,5 +1,5 @@
 import express from 'express'
-import { passwordController } from '../controllers/password.controller'
+import { passwordController } from '../controllers/passwordController'
 
 const router = express.Router()
 
@@ -10,8 +10,10 @@ router.get('/', (_, res) => {
 
 router.get('/password-count', passwordController.getCount)
 
-router.post('/password-hash', passwordController.getPasswordHash)
+router.get('/passwords', passwordController.getAll)
 
-router.post('/send-password', passwordController.hash)
+router.post('/retreive-password', passwordController.retreivePassword)
+
+router.post('/save-password', passwordController.savePassword)
 
 export default router

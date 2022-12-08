@@ -7,34 +7,33 @@ contract PasswordFactory is Ownable {
     uint public passwordsCount;
 
     struct Password {
-        bytes32 _passwordHash;
+        string _passwordHash;
         string _hashId;
     }
 
     mapping(address => Password[]) public passwords;
 
-    function storePassword(string calldata _hash, string calldata _id) external onlyOwner {
-        passwords[msg.sender].push(
-            Password(
-                bytes32(abi.encodePacked(_hash)),
-                _id
-            )
-        );
+    event NewPassword(string indexed hashId, bool indexed stored);
 
+    function storePassword(string calldata _hash, string calldata _id) external onlyOwner returns (bool) {
+        passwords[msg.sender].push(Password(_hash,_id));
+        bool stored = true;
         passwordsCount++;
+        emit NewPassword(_id, stored);
+        return stored;
     }
 
     function retreivePassword(string memory _passwordId) external view onlyOwner returns (string memory) {
         Password[] memory storedPasswords = passwords[msg.sender];
-        string memory stringifiedHash = 'not found';
+        string memory passwordHash;
 
         for (uint i = 0; i < passwordsCount; i++) {
 
             if (keccak256(abi.encodePacked(storedPasswords[i]._hashId)) == keccak256(abi.encodePacked(_passwordId))) {
-                stringifiedHash = string(abi.encodePacked(storedPasswords[i]._passwordHash));
+                passwordHash = storedPasswords[i]._passwordHash;
             }
         }
 
-        return stringifiedHash;
+        return passwordHash;
     }
 }

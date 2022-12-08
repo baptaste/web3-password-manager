@@ -4,8 +4,8 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 function App() {
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
-	const [passwordHash, setPasswordHash] = useState<string>('')
-	const [hashId, setHashId] = useState<string>('')
+	const [retreivedPassword, setRetreivedPassword] = useState<string>('')
+	// const [hashId, setHashId] = useState<string>('')
 	const [passwordName, setPasswordName] = useState<string>('')
 	const [passwordCount, setPasswordCount] = useState<number>(0)
 
@@ -22,25 +22,31 @@ function App() {
 					passwordName: passwordNameRef.current.value,
 					plainTextPassword: passwordRef.current.value
 				}
-				const res = await axios.post('http://localhost:3500/send-password', data)
+				const res = await axios.post('http://localhost:3500/save-password', data)
 				console.log('CLIENT - handleSubmit res:', res)
-				setHashId(res.data.hashId)
+				// setHashId(res.data.hashId)
 				passwordNameRef.current.value = ''
 				passwordRef.current.value = ''
+
+				// get updated datats
+				await getPasswordsCount()
+				await getAllPasswords()
 			}
 		} catch (error) {
 			console.error(error)
 		}
 	}
 
-	async function handleGetHashSubmit(e: any) {
+	async function handleRetreivePassword(e: any) {
 		e.preventDefault()
 
 		try {
 			if (hashIdRef.current) {
-				const res = await axios.post('http://localhost:3500/password-hash', { hashId: hashIdRef.current.value })
+				const res = await axios.post('http://localhost:3500/retreive-password', { hashId: hashIdRef.current.value })
 				console.log('CLIENT - handleGetHashIdSubmit res:', res)
-				setPasswordHash(res.data.passwordHash)
+				if (res.data.success) {
+					setRetreivedPassword(res.data.plainTextPassword)
+				}
 				hashIdRef.current.value = ''
 			}
 		} catch (error) {
@@ -54,27 +60,28 @@ function App() {
 		setPasswordCount(res.data.passwordCount)
 	}
 
+	async function getAllPasswords() {
+		const res = await axios.get('http://localhost:3500/passwords')
+		console.log('CLIENT - getAllPasswords res:', res.data.passwords)
+	}
+
 	useEffect(() => {
 		getPasswordsCount()
+		getAllPasswords()
 	}, [])
 
 	return (
 		<div className='App w-full h-screen flex flex-col items-center justify-center bg-slate-900 text-slate-100'>
 			<h2 className='text-2xl text-red-500'>Total stored passwords: {passwordCount}</h2>
+			{retreivedPassword.length > 0 ? <h2 className='text-2xl text-red-500'>Stored decrypted password : {retreivedPassword}</h2> : null}
 
-			<form onSubmit={handleGetHashSubmit} className='HashIdForm w-2/3 h-auto m-6 flex flex items-center justify-between'>
+			<form onSubmit={handleRetreivePassword} className='HashIdForm w-2/3 h-auto m-6 flex flex items-center justify-between'>
 				<div className='inputContainer w-1/2 flex flex-col items-center justify-between my-4 py-3'>
 					<label htmlFor='hashId' className='w-full mb-3 text-left text-2xl'>
 						Hash ID
 					</label>
 					<div className='w-full flex items-center justify-between'>
-						<input
-							ref={hashIdRef}
-							name='hashId'
-							type='text'
-							placeholder='Enter ID'
-							className='w-full h-full rounded-md p-4 text-slate-900'
-						/>
+						<input ref={hashIdRef} name='hashId' type='text' placeholder='Enter ID' className='w-full h-full rounded-md p-4 text-slate-900' />
 					</div>
 				</div>
 				<button
@@ -92,13 +99,7 @@ function App() {
 						Name
 					</label>
 					<div className='w-full flex items-center justify-between'>
-						<input
-							ref={passwordNameRef}
-							name='name'
-							type='text'
-							placeholder='Enter a name'
-							className='w-full h-full rounded-md p-4 text-slate-900'
-						/>
+						<input ref={passwordNameRef} name='name' type='text' placeholder='Enter a name' className='w-full h-full rounded-md p-4 text-slate-900' />
 					</div>
 				</div>
 
@@ -115,26 +116,18 @@ function App() {
 							className='w-full h-full rounded-md p-4 text-slate-900'
 						/>
 						{isPasswordVisible ? (
-							<EyeSlashIcon
-								className='h-6 w-6 text-blue-500 cursor-pointer absolute right-5'
-								onClick={() => setIsPasswordVisible(false)}
-							/>
+							<EyeSlashIcon className='h-6 w-6 text-blue-500 cursor-pointer absolute right-5' onClick={() => setIsPasswordVisible(false)} />
 						) : (
 							<EyeIcon className='h-6 w-6 text-blue-500 cursor-pointer absolute right-5' onClick={() => setIsPasswordVisible(true)} />
 						)}
 					</div>
 				</div>
 
-				<button
-					type='submit'
-					className='w-full p-3 mt-12 rounded-md bg-green-700 text-slate-100'
-					disabled={!passwordRef?.current?.value || !passwordNameRef?.current?.value}
-				>
+				<button type='submit' className='w-full p-3 mt-12 rounded-md bg-green-700 text-slate-100' disabled={!passwordRef?.current?.value || !passwordNameRef?.current?.value}>
 					Create password
 				</button>
 
 				{passwordName.length > 0 ? <h2 className='text-2xl text-slate-300'>Password name : {passwordName}</h2> : null}
-				{passwordHash.length > 0 ? <h2 className='text-2xl text-red-500'>Stored hash : {passwordHash}</h2> : null}
 			</form>
 		</div>
 	)

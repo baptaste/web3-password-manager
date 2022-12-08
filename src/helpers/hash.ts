@@ -1,4 +1,7 @@
 import bcrypt from 'bcrypt'
+import CryptoJS from 'crypto-js'
+
+const { ENCRYPTION_SECRET_KEY } = process.env
 
 export async function hashPassword(plainTextPassword: string): Promise<string | any> {
 	let hash: string = ''
@@ -23,4 +26,13 @@ export async function comparePasswords(plainTextPassword: string, storedHash: st
 	}
 
 	return match
+}
+
+export function encryptData(plainText: string): string {
+	return CryptoJS.AES.encrypt(plainText, ENCRYPTION_SECRET_KEY as string).toString()
+}
+
+export function decryptData(encrypted: string): string {
+	const bytes = CryptoJS.AES.decrypt(encrypted, ENCRYPTION_SECRET_KEY as string)
+	return bytes.toString(CryptoJS.enc.Utf8)
 }

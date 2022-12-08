@@ -3,12 +3,16 @@ dotenv.config()
 
 import app from './app'
 import mongoose from 'mongoose'
-import { verifyContractDeployed } from './contract/config'
+import { getContract, verifyContractDeployed } from './contract/config'
 
 const PORT = process.env.PORT || 3500
 const URI = process.env.MANGO_CLUSTER_URI || ''
 
 async function start() {
+	const contract = await getContract()
+	// contract?.filters.on(['NewPassword(string,bool)'])
+	console.log('contract address:', contract?.address)
+
 	const verifiedContract = await verifyContractDeployed()
 	console.log('Contract deployed:', verifiedContract.deployed)
 

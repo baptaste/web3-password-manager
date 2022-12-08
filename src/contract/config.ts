@@ -17,7 +17,7 @@ const ADDRESS: string = CONTRACT_ADDRESS ?? '' // ex: 0xNNNNNN...NNN
 const WALLET_PRIVATE_KEY: string = `0x${METAMASK_ACCOUNT1_PRIVATE_KEY}` ?? '' // ex: 0xNNNNNN...NNN
 
 // Returns Alchemy Provider
-async function _getProvider(): Promise<AlchemyProvider | null> {
+export async function getProvider(): Promise<AlchemyProvider | null> {
 	let provider = null
 
 	try {
@@ -58,7 +58,7 @@ export async function verifyContractDeployed(): Promise<any> {
 	let address = ''
 
 	try {
-		const provider = await _getProvider()
+		const provider = await getProvider()
 
 		if (provider) {
 			const deployedContractCode = await provider.getCode(ADDRESS)

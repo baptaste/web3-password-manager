@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { HardhatUserConfig } from 'hardhat/config'
-// import '@nomicfoundation/hardhat-toolbox'
+import '@nomicfoundation/hardhat-toolbox'
 import '@nomiclabs/hardhat-ethers'
 
 dotenv.config()
@@ -17,7 +17,13 @@ const config: HardhatUserConfig = {
 			}
 		}
 	},
-
+	paths: {
+		root: './blockchain-node',
+		cache: './cache',
+		artifacts: './artifacts',
+		sources: './contracts',
+		tests: './test',
+	},
 	// defaultNetwork: 'goerli',
 	defaultNetwork: 'polygon_mumbai',
 	// defaultNetwork: 'matic',
