@@ -9,7 +9,7 @@ function App() {
 	const [passwordCount, setPasswordCount] = useState<number>(0)
 	const passwordNameRef = useRef()
 	const passwordRef = useRef()
-	const hashIdRef = useRef()
+	const encryptionIdRef = useRef()
 
 	async function handleCreatePassword(e: any) {
 		e.preventDefault()
@@ -39,13 +39,13 @@ function App() {
 		e.preventDefault()
 
 		try {
-			if (hashIdRef.current) {
-				const res = await axios.post('http://localhost:3500/retreive-password', { hashId: hashIdRef.current.value })
+			if (encryptionIdRef.current) {
+				const res = await axios.post('http://localhost:3500/retreive-password', { encryption_id: encryptionIdRef.current.value })
 				console.log('CLIENT - handleGetHashIdSubmit res:', res)
 				if (res.data.success) {
 					setRetreivedPassword(res.data.plainTextPassword)
 				}
-				hashIdRef.current.value = ''
+				encryptionIdRef.current.value = ''
 			}
 		} catch (error) {
 			console.error(error)
@@ -75,7 +75,7 @@ function App() {
 
 			<div className='w-full h-auto flex items-center justify-center'>
 				<CreatePassword onSubmit={handleCreatePassword} passwordNameRef={passwordNameRef} passwordRef={passwordRef} />
-				<RetreivePassword onSubmit={handleRetreivePassword} hashIdRef={hashIdRef} />
+				<RetreivePassword onSubmit={handleRetreivePassword} encryptionIdRef={encryptionIdRef} />
 			</div>
 		</div>
 	)

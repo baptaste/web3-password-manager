@@ -12,5 +12,5 @@ export declare interface IStoreReturnData {
 }
 
 export declare interface IRetreiveReturnData {
-	encrypted: string
+	password: string
 }

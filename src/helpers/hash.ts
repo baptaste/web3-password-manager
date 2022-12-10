@@ -1,31 +1,32 @@
-import bcrypt from 'bcrypt'
+
 import CryptoJS from 'crypto-js'
+import * as argon2 from 'argon2'
 
 const { ENCRYPTION_SECRET_KEY } = process.env
 
-export async function hashPassword(plainTextPassword: string): Promise<string | any> {
-	let hash: string = ''
-	const salt: number = 10
-
+export async function hashPassword(plaintext: string): Promise<string | null> {
 	try {
-		hash = await bcrypt.hash(plainTextPassword, salt)
+		const hash: string = await argon2.hash(plaintext, { type: argon2.argon2id })
+		if (hash.length) {
+			return hash
+		}
 	} catch (error) {
 		console.error(error)
 	}
-
-	return hash
+	return null
 }
 
-export async function comparePasswords(plainTextPassword: string, storedHash: string): Promise<boolean | any> {
-	let match: boolean = false
-
+export async function verifyPassword(hash: string, plaintext: string): Promise<boolean> {
 	try {
-		match = await bcrypt.compare(plainTextPassword, storedHash)
+		const match: boolean = await argon2.verify(hash, plaintext);
+		if (match === false) {
+			return false
+		}
+		return true
 	} catch (error) {
 		console.error(error)
 	}
-
-	return match
+	return false
 }
 
 export function encryptData(plainText: string): string {

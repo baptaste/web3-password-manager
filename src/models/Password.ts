@@ -4,17 +4,14 @@ const Schema = mongoose.Schema
 
 const PasswordSchema = new Schema(
 	{
-		name: {
+		owner_id: { type: Schema.Types.ObjectId, ref: 'Owner' },
+		title: {
 			type: String,
-			required: [true, 'Name is required.']
+			required: [true, 'Title is required.']
 		},
-		hash_id: {
+		encryption_id: {
 			type: String,
-			required: [true, 'Hash ID is required.']
-		},
-		owner_id: {
-			type: Schema.Types.ObjectId,
-			ref: 'Owner'
+			required: [true, 'Encryption ID is required.']
 		},
 		created_at: {
 			type: Date,

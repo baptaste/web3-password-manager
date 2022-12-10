@@ -1,4 +1,4 @@
-import { decryptData, encryptData } from '../helpers/hash'
+import { decryptData, encryptData, hashPassword } from '../helpers/hash'
 import { v4 as uuid } from 'uuid'
 import ContractService from '../services/contract/ContractService'
 import PasswordService from '../services/database/PasswordService'
@@ -31,10 +31,10 @@ export const passwordController = {
 				if (stored === true) {
 					console.log('passwordController - contract storage success:', stored)
 					// store password name and hash id in database
-					await PasswordService.create({ name: passwordName, hash_id: randomId })
+					await PasswordService.create({ name: passwordName, encryption_id: randomId })
 						.then(() => {
 							console.log('passwordController - db create password success')
-							res.status(200).json({ success: true, name: passwordName, hash_id: randomId })
+							res.status(200).json({ success: true, name: passwordName, encryption_id: randomId })
 						})
 						.catch((err) => {
 							console.error('passwordController - db create password error:', err)
@@ -48,28 +48,28 @@ export const passwordController = {
 			})
 	},
 	retreivePassword: async (req: Express.Request, res: Express.Response) => {
-		const { hashId } = req.body
-		console.log('passwordController - retreivePassword req hashId:', hashId)
+		const { encryption_id } = req.body
+		console.log('passwordController - retreivePassword req encryption_id:', encryption_id)
 
-		if (hashId.length === 0) {
-			res.status(400).json({ success: false, message: 'No hashId found in request body' })
+		if (encryption_id.length === 0) {
+			res.status(400).json({ success: false, message: 'No encryption_id found in request body' })
 		}
 
-		const foundPassword = await PasswordService.get(hashId)
+		const foundPassword = await PasswordService.get(encryption_id)
 		console.log('passwordController - db password found:', foundPassword)
 
 		if (!foundPassword) {
-			res.status(400).json({ success: false, message: `No password found in collection with hash id ${hashId}` })
+			res.status(400).json({ success: false, message: `No password found in collection with hash id ${encryption_id}` })
 		}
 
 		const contractPassword = await ContractService.retreive(foundPassword.hash_id)
 		console.log('passwordController - retreivePassword, contractPassword:', contractPassword)
 
 		if (!contractPassword) {
-			res.status(400).json({ success: false, message: `No encrypted password found in contract with hash id ${hashId}` })
+			res.status(400).json({ success: false, message: `No encrypted password found in contract with hash id ${encryption_id}` })
 		}
 
-		const plainTextPassword = decryptData(contractPassword.encrypted)
+		const plainTextPassword = decryptData(contractPassword.password)
 		console.log('passwordController - retreivePassword, plainTextPassword:', plainTextPassword)
 
 		res.status(200).json({ success: true, plainTextPassword })

@@ -19,7 +19,7 @@ class PasswordService {
 	static get(id: string): Promise<any> {
 		return new Promise((resolve, reject) => {
 			console.log('PasswordService - get password with id:', id)
-			Password.find({ hash_id: id })
+			Password.find({ encryption_id: id })
 				.then((password) => {
 					console.log('PasswordService - get password success')
 					resolve(password[0])

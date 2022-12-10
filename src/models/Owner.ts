@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const OwnerSchema = new Schema(
 	{
-		// not necessary during creation process
+		// not necessary during creation process (add it when first login to wallet provider)
 		address: {
 			type: String,
 			unique: true
@@ -20,12 +20,7 @@ const OwnerSchema = new Schema(
 			unique: true
 			// required: [true, 'Master password is required.']
 		},
-		owner_passwords: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'Password'
-			}
-		],
+		passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }],
 		created_at: {
 			type: Date,
 			immutable: true,

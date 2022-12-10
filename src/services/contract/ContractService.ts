@@ -14,14 +14,14 @@ const contractEventFilterHandler: IContractEventFilterHandler = {
 
 export default class ContractService {
 	// store encrypted password and its id on contract
-	static store(encrypted: string, hashId: string): Promise<IStoreReturnData> {
+	static store(password: string, encryptionId: string): Promise<IStoreReturnData> {
 		return new Promise((resolve, reject) => {
 			getContract()
 				.then((contract) => {
 					if (contract) {
 						console.log('ContractService store - we got the contract')
 						contract
-							.storePassword(encrypted, hashId)
+							.storePassword(password, encryptionId)
 							.then((transaction: any) => {
 								if (transaction) {
 									console.log('ContractService store - we got a transaction')
@@ -51,17 +51,17 @@ export default class ContractService {
 	}
 
 	// retreive encrypted password
-	static retreive(hashId: string): Promise<IRetreiveReturnData> {
+	static retreive(encryptionId: string): Promise<IRetreiveReturnData> {
 		return new Promise((resolve, reject) => {
 			getContract()
 				.then((contract) => {
 					if (contract) {
 						console.log('ContractService retreive - we got the contract')
 						contract
-							.retreivePassword(hashId)
-							.then((encrypted: string) => {
-								console.log('ContractService retreive - retreivePassword successful, encrypted :', encrypted)
-								resolve({ encrypted })
+							.retreivePassword(encryptionId)
+							.then((password: string) => {
+								console.log('ContractService retreive - retreivePassword successful, password :', password)
+								resolve({ password })
 							})
 							.catch((err: any) => {
 								console.error('ContractService retreive - couldnt retreive password , error:', err)
