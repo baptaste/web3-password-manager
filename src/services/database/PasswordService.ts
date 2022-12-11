@@ -1,13 +1,19 @@
 import Password from '../../models/Password'
 
+interface ICreateProps {
+	title: string
+	owner_id: string
+	encryption_id: string
+}
+
 class PasswordService {
-	static create(data: any): Promise<void> {
+	static create(data: ICreateProps): Promise<any> {
 		return new Promise((resolve, reject) => {
 			console.log('PasswordService - create password with data:', data)
 			Password.create(data)
-				.then(() => {
+				.then((password) => {
 					console.log('PasswordService - create password success')
-					resolve()
+					resolve(password)
 				})
 				.catch((err) => {
 					console.log('PasswordService - create password error:', err)
@@ -16,10 +22,14 @@ class PasswordService {
 		})
 	}
 
-	static get(id: string): Promise<any> {
+	static getPassword(id: string): Promise<any> {
+		const ownerIdField: string = 'owner_id'
+
 		return new Promise((resolve, reject) => {
 			console.log('PasswordService - get password with id:', id)
 			Password.find({ encryption_id: id })
+				// populate password document with Users collection
+				.populate(ownerIdField)
 				.then((password) => {
 					console.log('PasswordService - get password success')
 					resolve(password[0])

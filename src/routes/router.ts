@@ -1,24 +1,34 @@
 import express from 'express'
-import { authController } from '../controllers/authController'
+import { userController } from '../controllers/userController'
 import { passwordController } from '../controllers/passwordController'
 
 const router = express.Router()
 
-router.get('/', (_, res) => {
-	console.log('Hello from api')
-	res.json('Hello from api')
-})
+const endpoints = {
+	users: '/api/users',
+	passwords: '/api/passwords'
+}
 
-router.get('/password-count', passwordController.getCount)
+//////////////////
+// Users routes //
+//////////////////
 
-router.get('/passwords', passwordController.getAll)
+// Get
+router.get(endpoints.users, userController.getAll)
+router.get(`${endpoints.users}/:id`, userController.getUser)
+// Post
+router.post(`${endpoints.users}/create`, userController.createUser)
+router.post(`${endpoints.users}/verify`, userController.verifyMasterPassword)
 
-router.post('/retreive-password', passwordController.retreivePassword)
+//////////////////////
+// Passwords routes //
+//////////////////////
 
-router.post('/save-password', passwordController.savePassword)
-
-router.post('/owner/master-password/create', authController.createMasterPassword)
-
-router.post('/owner/master-password/verify', authController.verifyMasterPassword)
+// Get
+router.get(endpoints.passwords, passwordController.getAll)
+router.get(`${endpoints.passwords}/count`, passwordController.getCount)
+// Post
+router.post(`${endpoints.passwords}/create`, passwordController.createPassword)
+router.post(`${endpoints.passwords}/retreive`, passwordController.retreivePassword)
 
 export default router

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 const PasswordSchema = new Schema(
 	{
-		owner_id: { type: Schema.Types.ObjectId, ref: 'Owner' },
+		owner_id: { type: Schema.Types.ObjectId, ref: 'User' },
 		title: {
 			type: String,
 			required: [true, 'Title is required.']
