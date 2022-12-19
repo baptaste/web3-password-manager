@@ -1,16 +1,17 @@
 import Password from '../../models/Password'
 
-interface ICreateProps {
-	title: string
-	owner_id: string
-	encryption_id: string
-}
-
 class PasswordService {
-	static create(data: ICreateProps): Promise<any> {
+	static async create(title: string, userId: string, randomId: string): Promise<any> {
+		const foundPassword = await Password.find().where('encryption_id').equals(randomId)
+
+		if (foundPassword[0]) {
+			console.log('PasswordService - create, foundPassword:', foundPassword[0])
+			throw `Password already exists with randomId ${randomId}`
+		}
+
 		return new Promise((resolve, reject) => {
-			console.log('PasswordService - create password with data:', data)
-			Password.create(data)
+			console.log('PasswordService - create password with title:', title, ' userId:', userId, ' randomId:', randomId)
+			Password.create({ title, owner_id: userId, encryption_id: randomId })
 				.then((password) => {
 					console.log('PasswordService - create password success')
 					resolve(password)
@@ -23,16 +24,18 @@ class PasswordService {
 	}
 
 	static getPassword(id: string): Promise<any> {
-		const ownerIdField: string = 'owner_id'
+		// const ownerIdField: string = 'owner_id'
 
 		return new Promise((resolve, reject) => {
 			console.log('PasswordService - get password with id:', id)
-			Password.find({ encryption_id: id })
-				// populate password document with Users collection
-				.populate(ownerIdField)
-				.then((password) => {
+			Password.find()
+				.where('encryption_id')
+				.equals(id)
+				// // populate password document with Users collection
+				// .populate(ownerIdField)
+				.then((passwords) => {
 					console.log('PasswordService - get password success')
-					resolve(password[0])
+					resolve(passwords[0])
 				})
 				.catch((err) => {
 					console.log('PasswordService - get password error:', err)
@@ -41,10 +44,12 @@ class PasswordService {
 		})
 	}
 
-	static getAll(): Promise<any> {
+	static getAll(userId: string): Promise<any> {
 		return new Promise((resolve, reject) => {
 			console.log('PasswordService - get all passwords')
 			Password.find()
+				.where('owner_id')
+				.equals(userId)
 				.then((passwords) => {
 					console.log('PasswordService - get all passwords success')
 					resolve(passwords)

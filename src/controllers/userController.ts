@@ -16,42 +16,36 @@ export const userController = {
 			return res.status(400).json({ error: 'No password found' })
 		}
 
-		const randomNumber = generateCSPRNG()
+		// create cryptographically secure pseudo-random number used to create encryption key
+		const randomStr: string = generateCSPRNG(256)
+
 		// create user master password as a derived key, used to encrypt data encryption key
 		const masterPasswordHash = await hash(plaintextPassword)
 
 		if (masterPasswordHash) {
-			console.log('userController - createUser, masterPasswordHash: ', masterPasswordHash)
-			// create user data encryption key
-			const encryptionKey = encryptData(randomNumber, masterPasswordHash)
-			console.log('userController - createUser, encryptionKey: ', encryptionKey)
+			// create user password key, used to encrypt users data encryption key
+			// TODO persist this key in session
+			const passwordKey = await hash(masterPasswordHash)
+			console.log('userController - createUser, passwordKey: ', passwordKey)
 
-			await UserService.create(email, masterPasswordHash, encryptionKey)
-				.then((user) => {
-					res.status(200).json({ success: true, user })
-				})
-				.catch((err) => {
-					res.status(400).json({ success: false, message: err })
-				})
+			if (passwordKey) {
+				// create user data encryption key
+				const encryptionKey = encryptData(randomStr, passwordKey)
+				console.log('userController - createUser, encryptionKey: ', encryptionKey)
+
+				UserService.create(email, masterPasswordHash, passwordKey, encryptionKey)
+					.then((user) => {
+						res.status(200).json({ success: true, user })
+					})
+					.catch((err) => {
+						res.status(400).json({ success: false, message: err })
+					})
+			} else {
+				res.status(400).json({ success: false, message: 'Could not generate password key' })
+			}
 		} else {
 			res.status(400).json({ success: false, message: 'Could not generate master password' })
 		}
-	},
-
-	verifyMasterPassword: async (req: Express.Request, res: Express.Response) => {
-		const { plaintext, hash } = req.body
-
-		if (plaintext.length === 0) {
-			return res.status(400).json({ error: 'No password found' })
-		}
-
-		await UserService.verifyMasterPassword(hash, plaintext)
-			.then((match) => {
-				res.status(200).json({ success: true, match })
-			})
-			.catch((err) => {
-				res.status(400).json({ success: false, message: err })
-			})
 	},
 
 	getUser: async (req: Express.Request, res: Express.Response) => {
@@ -61,7 +55,10 @@ export const userController = {
 			return res.status(400).json({ error: 'No password found' })
 		}
 
-		await UserService.get(id)
+		console.log('GET User - req.user :', req.user)
+		//TODO user req.user.id instead of sending it from params
+
+		await UserService.getById(id)
 			.then((user) => {
 				res.status(200).json({ success: true, user })
 			})

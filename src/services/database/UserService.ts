@@ -2,17 +2,18 @@ import { verify } from '../../helpers/hash'
 import User from '../../models/User'
 
 class UserService {
-	static async create(email: string, hash: string, encryptionKey: string): Promise<void> {
-		const foundUser = await User.find({ email })
+	static async create(email: string, hash: string, passwordKey: string, encryptionKey: string): Promise<void> {
+		const foundUser = await User.find().where('email').equals(email)
+
+		if (foundUser[0]) {
+			console.log('UserService - create, foundUser:', foundUser[0])
+			throw `User already exists with email ${email}`
+		}
 
 		return new Promise((resolve, reject) => {
 			console.log('UserService - create user with email:', email, 'and master password hash:', hash)
 
-			if (foundUser) {
-				reject('User already exists with this email')
-			}
-
-			User.create({ email, master_password: hash, encryption_key: encryptionKey })
+			User.create({ email, master_password: hash, password_key: passwordKey, encryption_key: encryptionKey })
 				.then((user) => {
 					console.log('UserService - create user success')
 					resolve(user)
@@ -29,7 +30,7 @@ class UserService {
 			console.log('UserService - verify master password with plaintext:', plaintext)
 			verify(hash, plaintext)
 				.then((match) => {
-					if (match) {
+					if (match === true) {
 						console.log('UserService - verify master password success:', match)
 						resolve(true)
 					} else {
@@ -62,7 +63,7 @@ class UserService {
 		})
 	}
 
-	static get(userId: string): Promise<string> {
+	static getById(userId: string): Promise<string> {
 		const userPasswordsField: string = 'user_passwords'
 
 		return new Promise((resolve, reject) => {
@@ -80,6 +81,34 @@ class UserService {
 				})
 				.catch((err) => {
 					console.log('UserService - getUser error:', err)
+					reject(err)
+				})
+		})
+	}
+
+	static getByField(field: string, value: string, populate: string[] = []): Promise<any> {
+		const schemaPrefix: string = 'user_'
+
+		if (populate.length) {
+			for (let i = 0; i < populate.length; i++) {
+				populate[i] = schemaPrefix.concat(populate[i])
+				console.log('current populate field:', populate[i])
+			}
+		}
+
+		return new Promise((resolve, reject) => {
+			console.log('UserService - getByFieldKeyValue, field:', field, ' value:', value)
+			User.find()
+				.where(field)
+				.equals(value)
+				.populate(populate)
+				.then((users) => {
+					console.log('UserService - getByFieldKeyValue success, user:', users[0])
+
+					resolve(users[0])
+				})
+				.catch((err) => {
+					console.log('UserService - getByFieldKeyValue error:', err)
 					reject(err)
 				})
 		})
@@ -103,12 +132,12 @@ class UserService {
 	static async addPassword(userId: string, password: any): Promise<boolean> {
 		const foundUser = await User.find({ userId })
 
+		if (!foundUser[0]) {
+			throw 'No user found with id ' + userId
+		}
+
 		return new Promise((resolve, reject) => {
 			console.log('UserService - adding new password item to user passwords with user id:', userId, 'and password:', password)
-
-			if (!foundUser) {
-				reject('No user found with id ' + userId)
-			}
 
 			User.updateOne(
 				{ _id: userId },

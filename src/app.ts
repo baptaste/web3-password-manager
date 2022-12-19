@@ -1,19 +1,20 @@
 import express from 'express'
 import cors, { CorsOptions } from 'cors'
+import cookieParser from 'cookie-parser'
 import router from './routes/router'
+import { verifyToken } from './middlewares/auth'
 
 const app = express()
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-const allowedOrigins = ['http://localhost:5173']
-
+const allowedOrigins: string[] = ['http://localhost:5173']
 const options: CorsOptions = {
 	origin: allowedOrigins
 }
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors(options))
+app.use(cookieParser())
+// app.use(verifyToken)
 app.use(router)
 
 export default app

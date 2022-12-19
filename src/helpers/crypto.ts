@@ -2,8 +2,8 @@ import crypto from 'crypto'
 import CryptoJS from 'crypto-js'
 
 // generate a CSPRNG (cryptographically secure pseudo-random number generator)
-export function generateCSPRNG(): string {
-	return crypto.randomBytes(256).toString('hex')
+export function generateCSPRNG(size: number): string {
+	return crypto.randomBytes(size).toString('hex')
 }
 
 export function encryptData(plainText: string, secretKey: string): string {

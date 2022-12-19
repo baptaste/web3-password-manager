@@ -1,12 +1,19 @@
 import express from 'express'
 import { userController } from '../controllers/userController'
 import { passwordController } from '../controllers/passwordController'
+import { authController } from '../controllers/authController'
+import { verifyToken } from '../middlewares/auth'
 
 const router = express.Router()
 
-const endpoints = {
+interface IRouterEnpoints {
+	[key: string]: string
+}
+
+const routerEndpoints: IRouterEnpoints = {
 	users: '/api/users',
-	passwords: '/api/passwords'
+	passwords: '/api/passwords',
+	auth: '/api/auth'
 }
 
 //////////////////
@@ -14,21 +21,28 @@ const endpoints = {
 //////////////////
 
 // Get
-router.get(endpoints.users, userController.getAll)
-router.get(`${endpoints.users}/:id`, userController.getUser)
+router.get(routerEndpoints.users, userController.getAll)
+router.get(`${routerEndpoints.users}/:id`, verifyToken, userController.getUser)
 // Post
-router.post(`${endpoints.users}/create`, userController.createUser)
-router.post(`${endpoints.users}/verify`, userController.verifyMasterPassword)
+router.post(`${routerEndpoints.users}/create`, verifyToken, userController.createUser)
+
+//////////////////
+// Auth routes //
+//////////////////
+
+// Post
+router.post(`${routerEndpoints.auth}/verify`, authController.verifyUser)
+router.post(`${routerEndpoints.auth}/login`, authController.loginUser)
 
 //////////////////////
 // Passwords routes //
 //////////////////////
 
 // Get
-router.get(endpoints.passwords, passwordController.getAll)
-router.get(`${endpoints.passwords}/count`, passwordController.getCount)
+router.get(`${routerEndpoints.passwords}/:userId`, passwordController.getAll)
+router.get(`${routerEndpoints.passwords}/count`, passwordController.getCount)
 // Post
-router.post(`${endpoints.passwords}/create`, passwordController.createPassword)
-router.post(`${endpoints.passwords}/retreive`, passwordController.retreivePassword)
+router.post(`${routerEndpoints.passwords}/create`, passwordController.createPassword)
+router.post(`${routerEndpoints.passwords}/retreive`, passwordController.retreivePassword)
 
 export default router

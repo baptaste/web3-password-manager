@@ -14,6 +14,11 @@ const UserSchema = new Schema(
 			unique: true,
 			required: [true, 'Master password is required.']
 		},
+		password_key: {
+			type: String,
+			unique: true,
+			required: [true, 'Password key is required.']
+		},
 		encryption_key: {
 			type: String,
 			unique: true,
@@ -21,8 +26,7 @@ const UserSchema = new Schema(
 		},
 		// not necessary during creation process (add it when first login to wallet provider)
 		address: {
-			type: String,
-			unique: true
+			type: String
 		},
 		user_passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }],
 		created_at: {
