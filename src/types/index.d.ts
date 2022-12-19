@@ -1,15 +1,10 @@
+import { CookieOptions } from 'express'
+
 export {}
 
 // export interface IRefreshToken {
 // 	token: string
 // }
-
-interface ICookieOptions {
-	httpOnly: boolean
-	secure: boolean
-	sameSite: string
-	maxAge: number
-}
 
 declare global {
 	namespace Express {
@@ -23,7 +18,7 @@ declare global {
 		interface Response {
 			status: (code: number) => void | any
 			json: (data: any) => void
-			cookie: (key: string, value: string, options: ICookieOptions) => void
+			cookie: (key: string, value: string, options: CookieOptions) => void
 		}
 	}
 }
