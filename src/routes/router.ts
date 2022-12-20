@@ -2,7 +2,7 @@ import express from 'express'
 import { userController } from '../controllers/userController'
 import { passwordController } from '../controllers/passwordController'
 import { authController } from '../controllers/authController'
-import { verifyToken } from '../middlewares/auth'
+import { handleAuth } from '../middlewares/auth'
 
 const router = express.Router()
 
@@ -22,17 +22,18 @@ const routerEndpoints: IRouterEnpoints = {
 
 // Get
 router.get(routerEndpoints.users, userController.getAll)
-router.get(`${routerEndpoints.users}/:id`, verifyToken, userController.getUser)
+router.get(`${routerEndpoints.users}/:id`, handleAuth, userController.getUser)
 // Post
-router.post(`${routerEndpoints.users}/create`, verifyToken, userController.createUser)
+router.post(`${routerEndpoints.users}/create`, userController.createUser)
 
 //////////////////
 // Auth routes //
 //////////////////
 
 // Post
-router.post(`${routerEndpoints.auth}/verify`, authController.verifyUser)
-router.post(`${routerEndpoints.auth}/login`, authController.loginUser)
+router.post(`${routerEndpoints.auth}/verify`, authController.verify)
+router.post(`${routerEndpoints.auth}/login`, authController.login)
+router.get(`${routerEndpoints.auth}/refresh`, handleAuth, authController.refresh)
 
 //////////////////////
 // Passwords routes //

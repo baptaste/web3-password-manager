@@ -1,12 +1,14 @@
+import { Request, Response } from 'express'
 import UserService from '../services/database/UserService'
 import jwt from 'jsonwebtoken'
 import { generateToken } from '../helpers/token'
 import AuthService from '../services/database/AuthService'
 import cookieParser from 'cookie-parser'
+import { cookieOptions } from '../helpers/cookie'
 
 export const authController = {
-	// Authenticate User with email / password and send refresh token in response
-	verifyUser: async (req: Express.Request, res: Express.Response) => {
+	// Begin - Authenticate User with email / password and send refresh token in response
+	verify: async (req: Request, res: Response) => {
 		const { email, plaintext } = req.body
 
 		if (plaintext.length === 0) {
@@ -16,32 +18,37 @@ export const authController = {
 		const user = await UserService.getByField('email', email, ['passwords']) // TODO remove ['password'] => just for populate test
 		console.log('/auth/verify - user:', user)
 
+		// delete previous refresh token if exists
+		console.log('/auth/verify - deleting previous refresh token in db...')
+		await AuthService.deleteRefreshToken(user._id)
+		console.log('/auth/verify - deleting previous refresh token cookie...')
+		res.clearCookie('refresh_token')
+
 		if (!user) {
 			res.status(400).json({ success: false, message: `No user found with email ${email}` })
 		} else {
 			UserService.verifyMasterPassword(user.master_password, plaintext)
-				.then((match) => {
-					if (match) {
-						const token = generateToken({ type: 'refresh', user, expiration: '1h' })
+				.then((verified) => {
+					if (verified) {
+						const token = generateToken({ type: 'refresh', user, expiration: '2m' })
 
 						AuthService.createRefreshToken(user._id, token)
 							.then((refreshToken) => {
-								console.log('/auth/verify - refresh token stored in db:', refreshToken)
+								console.log(
+									'/auth/verify - refresh token stored in db:',
+									refreshToken
+								)
 								console.log('/auth/verify - set cookie with refresh token...')
 
-								// SET COOKIE with refresh token
-								res.cookie('refresh_token', refreshToken, {
-									httpOnly: true,
-									secure: process.env.NODE_ENV === 'production',
-									sameSite: 'strict',
-									maxAge: 1000 * 60 * 60 * 24 * 365 // 1 year
-								})
+								// set refresh token in cookies
+								// if it expires, user should have to login/authenticate again
+								res.cookie('refresh_token', refreshToken, cookieOptions)
 
-								res.status(200).json({ success: true, match })
+								res.status(200).json({ success: true, verified })
 							})
 							.catch((err) => {
 								console.error('authController - createRefreshToken error:', err)
-								res.status(400).json({ success: false, message: err })
+								res.status(400).json({ success: false, verified, message: err })
 							})
 					}
 				})
@@ -53,7 +60,7 @@ export const authController = {
 	},
 
 	// Authorize User with JWT (already authenticated with verifyUser method)
-	loginUser: async (req: Express.Request, res: Express.Response) => {
+	login: async (req: Request, res: Response) => {
 		//TODO add Content-Type: application/json in client req headers
 
 		if (req.body.email.length === 0) {
@@ -65,28 +72,58 @@ export const authController = {
 		console.log('/auth/login - refresh_token:', refresh_token)
 
 		if (!refresh_token) {
-			return res.status(401).json({ success: false, message: 'No refresh token found in cookies' })
+			return res
+				.status(401)
+				.json({ success: false, message: 'No refresh token found in cookies' })
 		}
 
 		const user = await UserService.getByField('email', req.body.email)
 
 		if (!user) {
-			return res.status(400).json({ success: false, message: `No user found with email ${req.body.email}` })
+			return res
+				.status(400)
+				.json({ success: false, message: `No user found with email ${req.body.email}` })
 		} else {
 			const verifiedToken = await AuthService.verifyRefreshToken(user._id, refresh_token)
 			console.log('/auth/login - verifiedToken:', verifiedToken)
 
 			if (!verifiedToken) {
-				return res.status(401).json({ success: false, message: 'No refresh token found in db' })
+				return res
+					.status(401)
+					.json({ success: false, message: 'No refresh token found in db' })
 			}
 			// TODO
 			// add address in token payload if logged to MetaMask/Wallet Provider
-			// add expiration when we have a refresh token later
 
-			const accessToken = generateToken({ type: 'access', user, expiration: 15 })
+			const accessToken = generateToken({ type: 'access', user, expiration: '1m' })
 			console.log('/auth/login - accessToken:', accessToken)
 
 			res.json({ success: true, accessToken })
 		}
+	},
+
+	// Refresh user ressources access by login in him again with new access token
+	refresh: async (req: Request, res: Response) => {
+		// get token from cookies
+		const token = req.cookies.refresh_token
+		const { user } = req
+		console.log('/auth/refresh - refresh_token:', token)
+
+		console.log('/auth/refresh - req.user:', user)
+
+		// verify token in db with user id from jwt verify payload
+		const verifiedToken = await AuthService.verifyRefreshToken(user.id, token)
+		console.log('/auth/refresh - verifiedToken:', verifiedToken)
+
+		if (!verifiedToken) {
+			return res.status(401).json({ success: false, message: 'No refresh token found in db' })
+		}
+
+		const newAccessToken = generateToken({ type: 'access', user, expiration: '1m' })
+		console.log('/auth/refresh - newAccessToken:', newAccessToken)
+
+		res.json({ success: true, accessToken: newAccessToken })
+
+		// TODO add refresh token rotation method
 	}
 }

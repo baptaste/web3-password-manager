@@ -38,6 +38,43 @@ class AuthService {
 				})
 		})
 	}
+
+	static deleteRefreshToken(userId: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			console.log('AuthService - delete refresh token with userId:', userId)
+
+			Token.deleteOne({ user_id: userId })
+				.then(() => {
+					console.log('AuthService - delete refresh token success')
+					resolve()
+				})
+				.catch((err) => {
+					console.log('AuthService - delete refresh token error:', err)
+					reject(err)
+				})
+		})
+	}
+
+	static getRefreshToken(userId: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			console.log('AuthService - get refresh token with userId:', userId)
+
+			Token.find({ user_id: userId })
+				.then((token) => {
+					if (token) {
+						console.log('AuthService - get refresh token success, token:', token)
+						resolve(token[0])
+					} else {
+						console.log('AuthService - get refresh token failed')
+						resolve(null)
+					}
+				})
+				.catch((err) => {
+					console.log('AuthService - get refresh token error:', err)
+					reject(err)
+				})
+		})
+	}
 }
 
 export default AuthService
