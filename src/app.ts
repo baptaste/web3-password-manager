@@ -2,7 +2,6 @@ import express from 'express'
 import cors, { CorsOptions } from 'cors'
 import cookieParser from 'cookie-parser'
 import router from './routes/router'
-import { verifyAccessToken } from './middlewares/auth'
 
 const app = express()
 const allowedOrigins: string[] = ['http://localhost:5173']

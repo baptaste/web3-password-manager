@@ -2,10 +2,6 @@ import { CookieOptions } from 'express'
 
 export {}
 
-// export interface IRefreshToken {
-// 	token: string
-// }
-
 declare global {
 	namespace Express {
 		interface Request {

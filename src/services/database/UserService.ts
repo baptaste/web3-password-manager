@@ -2,7 +2,12 @@ import { verify } from '../../helpers/hash'
 import User from '../../models/User'
 
 class UserService {
-	static async create(email: string, hash: string, passwordKey: string, encryptionKey: string): Promise<void> {
+	static async create(
+		email: string,
+		hash: string,
+		passwordKey: string,
+		encryptionKey: string
+	): Promise<void> {
 		const foundUser = await User.find().where('email').equals(email)
 
 		if (foundUser[0]) {
@@ -11,9 +16,19 @@ class UserService {
 		}
 
 		return new Promise((resolve, reject) => {
-			console.log('UserService - create user with email:', email, 'and master password hash:', hash)
+			console.log(
+				'UserService - create user with email:',
+				email,
+				'and master password hash:',
+				hash
+			)
 
-			User.create({ email, master_password: hash, password_key: passwordKey, encryption_key: encryptionKey })
+			User.create({
+				email,
+				master_password: hash,
+				password_key: passwordKey,
+				encryption_key: encryptionKey
+			})
 				.then((user) => {
 					console.log('UserService - create user success')
 					resolve(user)
@@ -50,7 +65,10 @@ class UserService {
 			User.findById(userId)
 				.then((user) => {
 					if (user) {
-						console.log('UserService - getEncryptionKey success, key:', user.encryption_key)
+						console.log(
+							'UserService - getEncryptionKey success, key:',
+							user.encryption_key
+						)
 						resolve(user.encryption_key)
 					} else {
 						reject('No user found with id ' + userId)
@@ -67,13 +85,13 @@ class UserService {
 		const userPasswordsField: string = 'user_passwords'
 
 		return new Promise((resolve, reject) => {
-			console.log('UserService - getUser with user id:', userId)
+			// console.log('UserService - getUser with user id:', userId)
 			User.findById(userId)
 				// populate user document with Passwords collection
 				.populate(userPasswordsField)
 				.then((user) => {
 					if (user) {
-						console.log('UserService - getUser success, user:', user)
+						// console.log('UserService - getUser success, user:', user)
 						resolve(user)
 					} else {
 						reject('No user found with id ' + userId)
@@ -92,7 +110,6 @@ class UserService {
 		if (populate.length) {
 			for (let i = 0; i < populate.length; i++) {
 				populate[i] = schemaPrefix.concat(populate[i])
-				console.log('current populate field:', populate[i])
 			}
 		}
 
@@ -103,8 +120,7 @@ class UserService {
 				.equals(value)
 				.populate(populate)
 				.then((users) => {
-					console.log('UserService - getByFieldKeyValue success, user:', users[0])
-
+					//console.log('UserService - getByFieldKeyValue success, user:', users[0])
 					resolve(users[0])
 				})
 				.catch((err) => {
@@ -137,7 +153,12 @@ class UserService {
 		}
 
 		return new Promise((resolve, reject) => {
-			console.log('UserService - adding new password item to user passwords with user id:', userId, 'and password:', password)
+			console.log(
+				'UserService - adding new password item to user passwords with user id:',
+				userId,
+				'and password:',
+				password
+			)
 
 			User.updateOne(
 				{ _id: userId },

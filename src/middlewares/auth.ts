@@ -1,61 +1,68 @@
 import { Request, Response, NextFunction } from 'express'
-import jwt, { VerifyErrors, TokenExpiredError, JwtPayload } from 'jsonwebtoken'
+import jwt, { VerifyErrors, TokenExpiredError, JwtPayload, JsonWebTokenError } from 'jsonwebtoken'
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env
 
-export const verifyAccessToken = (req: Request, res: Response, next: NextFunction) => {
-	const authHeader = req.headers['authorization']
-	const accessToken = authHeader ? authHeader?.split(' ')[1] : null
-	console.log('verifyAccessToken middleware - accessToken:', accessToken)
+type VerifyTokenResult = VerifyErrors | JwtPayload | string | undefined
 
-	if (accessToken === null) {
-		console.log('Unauthorized - No Access Token found in Headers')
-		return res.sendStatus(401)
-	}
+const verifyToken = (token: string, secret: string): VerifyTokenResult => {
+	let result: VerifyTokenResult = undefined
 
-	const secretKey = ACCESS_TOKEN_SECRET || ''
-
-	jwt.verify(accessToken, secretKey, (err, decoded) => {
-		if (err) {
-			if (err instanceof TokenExpiredError) {
-				console.log('err instanceof TokenExpiredError :', err instanceof TokenExpiredError)
-				console.log('Forbidden - Access Token expired:', err)
-				return res.sendStatus(403)
-			} else {
-				console.log('Forbidden. Error:', err)
-				return res.sendStatus(403)
-			}
-		}
-		console.log('verifyAccessToken middleware - verify jwt success, user:', decoded)
-		req.user = decoded
-		next()
+	jwt.verify(token, secret, (err, decoded) => {
+		err ? (result = err) : (result = decoded)
 	})
+
+	return result
 }
 
-export const verifyRefreshToken = (req: Request, res: Response, next: NextFunction) => {
-	const refreshToken = req.cookies.refresh_token
-	console.log('verifyRefreshToken middleware - refreshToken:', refreshToken)
-
-	if (refreshToken === null) {
-		console.log('Unauthorized - No Refresh Token found in Headers')
-		return res.sendStatus(401)
+const sendAuthResult = (
+	result: VerifyTokenResult,
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	if (
+		process.env.NODE_ENV === 'production' &&
+		(result instanceof TokenExpiredError || result instanceof JsonWebTokenError)
+	) {
+		return res.sendStatus(403)
 	}
 
-	const secretKey = REFRESH_TOKEN_SECRET || ''
+	if (result instanceof TokenExpiredError) {
+		return res.status(403).json({ success: false, message: 'Forbidden - Token expired' })
+	} else if (result instanceof JsonWebTokenError) {
+		return res.status(403).json({ success: false, message: `Forbidden - ${result}` })
+	}
 
-	jwt.verify(refreshToken, secretKey, (err: any, decoded: any) => {
-		if (err) {
-			if (err instanceof TokenExpiredError) {
-				console.log('err instanceof TokenExpiredError :', err instanceof TokenExpiredError)
-				console.log('Forbidden - Refresh Token expired:', err)
-				return res.sendStatus(403)
-			} else {
-				console.log('Forbidden. Error:', err)
-				return res.sendStatus(403)
-			}
-		}
-		console.log('verifyRefreshToken middleware - verify jwt success, user:', decoded)
-		req.user = decoded
-		next()
-	})
+	req.user = result
+	next()
+}
+
+export const handleAuth = (req: Request, res: Response, next: NextFunction) => {
+	let secretKey: string = ''
+	let token: string | null = null
+
+	const accessTokenRoutes: string[] = ['/api/users/:id', '/api/users/create']
+
+	const needAccess: boolean = accessTokenRoutes.includes(req.route.path)
+	const needRefresh: boolean = req.route.path === '/api/auth/refresh'
+
+	if (needAccess) {
+		const authHeader = req.headers['authorization']
+		token = authHeader ? authHeader?.split(' ')[1] : null
+	} else if (needRefresh) {
+		token = req.cookies.refresh_token
+	}
+
+	if (token === null) {
+		if (process.env.NODE_ENV === 'production') return res.sendStatus(401)
+		return res.status(401).json({
+			success: false,
+			message: `Unauthorized - No ${needAccess ? 'access' : 'refresh'} token found in headers`
+		})
+	}
+
+	secretKey = needAccess ? (ACCESS_TOKEN_SECRET as string) : (REFRESH_TOKEN_SECRET as string)
+	const result = verifyToken(token, secretKey)
+	sendAuthResult(result, req, res, next)
 }
