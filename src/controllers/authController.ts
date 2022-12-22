@@ -30,7 +30,7 @@ export const authController = {
 			UserService.verifyMasterPassword(user.master_password, plaintext)
 				.then((verified) => {
 					if (verified) {
-						const token = generateToken({ type: 'refresh', user, expiration: '2m' })
+						const token = generateToken({ type: 'refresh', user, expiration: '5m' })
 
 						AuthService.createRefreshToken(user._id, token)
 							.then((refreshToken) => {
@@ -95,7 +95,7 @@ export const authController = {
 			// TODO
 			// add address in token payload if logged to MetaMask/Wallet Provider
 
-			const accessToken = generateToken({ type: 'access', user, expiration: '1m' })
+			const accessToken = generateToken({ type: 'access', user, expiration: '2m' })
 			console.log('/auth/login - accessToken:', accessToken)
 
 			res.json({ success: true, accessToken })
@@ -119,7 +119,7 @@ export const authController = {
 			return res.status(401).json({ success: false, message: 'No refresh token found in db' })
 		}
 
-		const newAccessToken = generateToken({ type: 'access', user, expiration: '1m' })
+		const newAccessToken = generateToken({ type: 'access', user, expiration: '2m' })
 		console.log('/auth/refresh - newAccessToken:', newAccessToken)
 
 		res.json({ success: true, accessToken: newAccessToken })
