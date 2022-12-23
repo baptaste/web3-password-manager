@@ -2,7 +2,8 @@ import { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
-import { BASE_API_URL } from '../../../helpers/constants'
+import { BASE_API_URL } from '../../../common/helpers/constants'
+import Button from '../../../common/components/Button'
 
 export default function Login({ setAccessToken }: any) {
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
@@ -11,8 +12,8 @@ export default function Login({ setAccessToken }: any) {
 	const [loading, setLoading] = useState<boolean>(false)
 	const navigate = useNavigate()
 
-	async function handleLoginAccount(e: any) {
-		e.preventDefault()
+	async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault()
 		setLoading(true)
 		let email: string = ''
 
@@ -59,7 +60,7 @@ export default function Login({ setAccessToken }: any) {
 
 	return (
 		<div className='Login lg:w-1/2 md:w-full h-full flex flex-col items-center justify-center'>
-			<h1 className='text-4xl mb-5'>Login</h1>
+			<h1 className='text-2xl font-bold mb-5'>Log in to NAME</h1>
 
 			{loading ? (
 				<>
@@ -76,7 +77,7 @@ export default function Login({ setAccessToken }: any) {
 					</div>
 
 					<form
-						onSubmit={handleLoginAccount}
+						onSubmit={handleSubmit}
 						className='CreatePasswordForm w-full h-2/3 flex flex-col items-center justify-evenly'
 					>
 						<div className='inputContainer w-full flex flex-col items-center justify-between my-4 py-3'>
@@ -90,7 +91,7 @@ export default function Login({ setAccessToken }: any) {
 									name='email'
 									type='text'
 									placeholder='Enter an email'
-									className='w-full h-full rounded-md p-4 text-slate-900'
+									className='w-full h-full rounded-md p-4 text-slate-900 bg-slate-200'
 								/>
 							</div>
 						</div>
@@ -109,7 +110,7 @@ export default function Login({ setAccessToken }: any) {
 									type={isPasswordVisible ? 'text' : 'password'}
 									name='password'
 									placeholder='Enter your password'
-									className='w-full h-full rounded-md p-4 text-slate-900'
+									className='w-full h-full rounded-md p-4 text-slate-900 bg-slate-200'
 								/>
 								{isPasswordVisible ? (
 									<EyeSlashIcon
@@ -125,15 +126,13 @@ export default function Login({ setAccessToken }: any) {
 							</div>
 						</div>
 
-						<button
+						<Button
+							text='Log in'
 							type='submit'
-							className='w-full p-3 mt-12 rounded-md bg-green-700 text-slate-100 cursor-pointer'
 							disabled={
 								!masterPasswordRef?.current?.value || !emailRef?.current?.value
 							}
-						>
-							Login
-						</button>
+						/>
 					</form>
 				</>
 			)}

@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import Register from './features/account/Register'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import Home from './components/Home'
-import Login from './features/account/Login'
+
 import axios from 'axios'
-import { TabNav } from './navigation/TabNav'
+import TabNav from './navigation/TabNav'
+import PrivateRoute from './routes/PrivateRoute'
+import type { IRoute } from './routes/routes.d'
+
+const Home = lazy(() => import('./features/home'))
+const Login = lazy(() => import('./features/account/Login'))
+const Register = lazy(() => import('./features/account/Register'))
+const Dashboard = lazy(() => import('./features/dashboard'))
 
 function App() {
 	const [accessToken, setAccessToken] = useState<string | null>(null)
@@ -26,8 +32,13 @@ function App() {
 			}
 		} catch (err: any) {
 			setLoading(false)
-			console.log('refresh token expired, redirect to /login')
-			navigate('/login')
+			console.log(err.response.status, err.response.data.message)
+
+			// user doesnt have refresh token in cookie or has one expired
+			// redirect to login so he can have new one if he already have an account
+			if (err.response.status === 401 || err.response.status === 403) {
+				navigate('/login')
+			}
 		}
 	}
 
@@ -50,22 +61,26 @@ function App() {
 	}, [loggedIn])
 
 	return (
-		<div className='App w-full h-screen p-4 bg-slate-900 text-slate-100'>
-			<div className='Layout bg-slate-800 lg:h-full sm:h-2/3'>
-				<Routes>
-					<Route
-						path='/'
-						element={<Home loggedIn={loggedIn} accessToken={accessToken} />}
-					/>
-
-					<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
-					<Route path='/register' element={<Register />} />
-
-					{/* catch all route */}
-					<Route path='*' element={<Navigate to='/' replace />} />
-				</Routes>
+		<div className='App w-full h-screen p-4 bg-slate-50 text-slate-900'>
+			<div className='Layout lg:h-full sm:h-2/3'>
+				<Suspense fallback={<div>loading...</div>}>
+					<Routes>
+						<Route path='/' element={<Home />} />
+						<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
+						<Route path='/register' element={<Register />} />
+						<Route path='/dashboard' element={<Dashboard />} />
+						<Route
+							path='/protected'
+							element={
+								<PrivateRoute redirectTo='/login' isAuthenticated={loggedIn}>
+									<div>Todo</div>
+								</PrivateRoute>
+							}
+						/>
+						<Route path='*' element={<Navigate to='/' replace />} />
+					</Routes>
+				</Suspense>
 			</div>
-
 			<TabNav />
 		</div>
 	)

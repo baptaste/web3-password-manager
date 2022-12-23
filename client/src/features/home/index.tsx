@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import CreatePassword from '../../features/contract/CreatePassword'
-import RetreivePassword from '../../features/contract/RetreivePassword'
+import CreatePassword from '../passwords/CreatePassword'
+import RetreivePassword from '../passwords/RetreivePassword'
 
 export default function Home({ loggedIn, accessToken }: any) {
 	const [retreivedPassword, setRetreivedPassword] = useState<string>('')
@@ -72,8 +72,8 @@ export default function Home({ loggedIn, accessToken }: any) {
 				<>
 					<h2 className='w-2/3 text-center'>Welcome!</h2>
 					<Link
-						to={'/login'}
-						className='w-full p-3 mt-12 rounded-md bg-green-700 text-slate-100 cursor-pointer text-center'
+						to={'/register'}
+						className='w-full p-3 mt-12 rounded-md bg-sky-500 text-slate-100 cursor-pointer text-center'
 					>
 						Sign In
 					</Link>
