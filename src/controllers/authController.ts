@@ -111,6 +111,10 @@ export const authController = {
 
 		console.log('/auth/refresh - req.user:', user)
 
+		if (!token) {
+			return res.status(401).json({ success: false, message: 'No refresh token in cookies' })
+		}
+
 		// verify token in db with user id from jwt verify payload
 		const verifiedToken = await AuthService.verifyRefreshToken(user.id, token)
 		console.log('/auth/refresh - verifiedToken:', verifiedToken)

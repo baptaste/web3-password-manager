@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
+import Button from '../../../common/components/Button'
 
 export default function Register() {
 	const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
@@ -100,15 +101,13 @@ export default function Register() {
 							</div>
 						</div>
 
-						<button
+						<Button
+							text='Register new account'
 							type='submit'
-							className='w-full p-3 mt-12 rounded-md bg-sky-500 text-slate-100 cursor-pointer'
 							disabled={
 								!masterPasswordRef?.current?.value || !emailRef?.current?.value
 							}
-						>
-							Register my account
-						</button>
+						/>
 					</form>
 				</>
 			)}

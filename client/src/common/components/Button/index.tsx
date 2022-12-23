@@ -20,8 +20,8 @@ export default function Button({
 	onMouseEnter,
 	onMouseLeave
 }: IButtonProps) {
-	const setTheme = () => ButtonThemes[disabled ? 'disabled' : theme]
-	const buttonTheme = setTheme()
+	const getTheme = () => ButtonThemes[disabled ? 'disabled' : theme]
+	const buttonTheme = getTheme()
 
 	return (
 		<button

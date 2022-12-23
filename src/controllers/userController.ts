@@ -6,7 +6,12 @@ import UserService from '../services/database/UserService'
 export const userController = {
 	createUser: async (req: Express.Request, res: Express.Response) => {
 		const { email, plaintextPassword } = req.body
-		console.log('userController - createUser, email: ', email, 'plaintextPassword: ', plaintextPassword)
+		console.log(
+			'userController - createUser, email: ',
+			email,
+			'plaintextPassword: ',
+			plaintextPassword
+		)
 
 		if (email.length === 0) {
 			return res.status(400).json({ error: 'No email found' })

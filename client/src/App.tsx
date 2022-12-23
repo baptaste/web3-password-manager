@@ -62,7 +62,7 @@ function App() {
 
 	return (
 		<div className='App w-full h-screen p-4 bg-slate-50 text-slate-900'>
-			<div className='Layout lg:h-full sm:h-2/3'>
+			<div className='Layout lg:h-full sm:h-2/3 overflow-y-scroll'>
 				<Suspense fallback={<div>loading...</div>}>
 					<Routes>
 						<Route path='/' element={<Home />} />
