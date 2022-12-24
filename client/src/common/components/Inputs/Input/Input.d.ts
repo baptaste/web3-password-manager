@@ -23,7 +23,7 @@ type InputType =
 	| 'week'
 
 export declare interface IInputProps {
-	type: InputType
+	type?: InputType
 	placeholder: string
 
 	value?: string

@@ -5,13 +5,15 @@ import axios from 'axios'
 import { BASE_API_URL } from '../../../common/helpers/constants'
 import Button from '../../../common/components/Button'
 import Input from '../../../common/components/Inputs/Input'
+import InputPassword from '../../../common/components/Inputs/InputPassword'
 
 interface ILoginState {
 	[key: string]: string | boolean
 	email: string
 	password: string
-	passwordShown: boolean
 	loading: boolean
+	error: boolean
+	errorMsg: string
 }
 
 export default function Login({ setAccessToken }: any) {
@@ -20,12 +22,13 @@ export default function Login({ setAccessToken }: any) {
 	const [state, setState] = useState<ILoginState>({
 		email: '',
 		password: '',
-		passwordShown: false,
-		loading: false
+		loading: false,
+		error: false,
+		errorMsg: ''
 	})
 
 	const handleChange = (input: string, event: React.ChangeEvent<HTMLInputElement>) => {
-		setState((state) => ({ ...state, [input]: event.target.value }))
+		setState((state) => ({ ...state, error: false, errorMsg: '', [input]: event.target.value }))
 	}
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -66,14 +69,22 @@ export default function Login({ setAccessToken }: any) {
 					console.error(error)
 				}
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error)
+			if (error.response.status === 401) {
+				setState((state) => ({
+					...state,
+					loading: false,
+					error: true,
+					errorMsg: error.response.data.message
+				}))
+			}
 		}
 	}
 
 	return (
-		<div className='Login lg:w-1/2 md:w-full h-full flex flex-col items-center justify-center'>
-			<h1 className='text-2xl font-bold mb-5'>Log in to NAME</h1>
+		<div className='Login lg:w-1/2 md:w-full h-full flex flex-col items-center justify-evenly'>
+			<h1 className='text-2xl font-bold mb-5'>Log in to APP</h1>
 
 			{state.loading ? (
 				<>
@@ -93,48 +104,33 @@ export default function Login({ setAccessToken }: any) {
 						onSubmit={handleSubmit}
 						className='CreatePasswordForm w-full my-4 flex flex-col items-center justify-evenly'
 					>
+						{state.errorMsg?.length ? (
+							<p className='w-full text-center text-red-500 text-md my-4'>
+								{state.errorMsg}
+							</p>
+						) : null}
+
 						<Input
 							type='email'
 							name='Email'
 							placeholder='Email'
 							value={state.email}
+							error={state.error}
 							onChange={(e) => handleChange('email', e)}
 						/>
 
-						{/* <div className='inputContainer w-full flex flex-col items-center justify-between my-4 py-3'>
-							<label
-								htmlFor='password'
-								className='w-full flex flex-col mb-3 text-left text-lg	'
-							>
-								Master Password (Never send it to anyone)
-							</label>
-							<div className='w-full flex items-center justify-between relative'>
-
-								<input
-									ref={masterPasswordRef}
-									type={isPasswordVisible ? 'text' : 'password'}
-									name='password'
-									placeholder='Enter your password'
-									className='w-full h-full rounded-md p-4 text-slate-900 bg-slate-200'
-								/>
-								{isPasswordVisible ? (
-									<EyeSlashIcon
-										className='h-6 w-6 text-blue-500 cursor-pointer absolute right-5'
-										onClick={() => setIsPasswordVisible(false)}
-									/>
-								) : (
-									<EyeIcon
-										className='h-6 w-6 text-blue-500 cursor-pointer absolute right-5'
-										onClick={() => setIsPasswordVisible(true)}
-									/>
-								)}
-							</div>
-						</div> */}
+						<InputPassword
+							name='Password'
+							value={state.password}
+							error={state.error}
+							placeholder='Password'
+							onChange={(e) => handleChange('password', e)}
+						/>
 
 						<Button
 							text='Log in'
 							type='submit'
-							disabled={!state.email.length || !state.password.length}
+							disabled={!state.email.length || !state.password.length || state.error}
 						/>
 					</form>
 				</>

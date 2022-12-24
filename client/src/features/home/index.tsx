@@ -70,7 +70,7 @@ export default function Home({ loggedIn, accessToken }: any) {
 
 			{!loggedIn ? (
 				<>
-					<h2 className='w-2/3 text-center'>Welcome!</h2>
+					<h2 className='w-2/3 text-center'>Welcome friend!</h2>
 					<Link
 						to={'/register'}
 						className='w-full p-3 mt-12 rounded-md bg-sky-500 text-slate-100 cursor-pointer text-center'
@@ -80,8 +80,9 @@ export default function Home({ loggedIn, accessToken }: any) {
 				</>
 			) : (
 				<>
+					<h2 className='w-2/3 text-green-500 text-center'>Welcome back friend!</h2>
 					<h2 className='w-2/3 text-green-500 text-center'>accessToken:</h2>
-					<h1 className='w-full text-center break-all'>{accessToken}</h1>
+					<h3 className='w-full text-center break-all'>{accessToken}</h3>
 				</>
 			)}
 

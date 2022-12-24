@@ -65,7 +65,10 @@ function App() {
 			<div className='Layout lg:h-full sm:h-2/3 overflow-y-scroll'>
 				<Suspense fallback={<div>loading...</div>}>
 					<Routes>
-						<Route path='/' element={<Home />} />
+						<Route
+							path='/'
+							element={<Home loggedIn={loggedIn} accessToken={accessToken} />}
+						/>
 						<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
 						<Route path='/register' element={<Register />} />
 						<Route path='/dashboard' element={<Dashboard />} />

@@ -1,4 +1,6 @@
-import type { IInputProps } from './Input'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
+import type { IInputPasswordProps } from './InputPassword.d'
 
 const defaultClassName = 'w-full rounded-md px-4 py-8 text-lg text-slate-900 bg-transparent'
 
@@ -10,8 +12,8 @@ const validatedClassName =
 	defaultClassName.replace('text-slate-900', 'text-green-600') +
 	' border-solid border-2 border-green-500'
 
-export default function Input({
-	type = 'text',
+export default function InputPassword({
+	type = 'password',
 	placeholder,
 	value = '',
 	label = null,
@@ -22,7 +24,7 @@ export default function Input({
 	required = false,
 	onClick,
 	onChange
-}: IInputProps) {
+}: IInputPasswordProps) {
 	const getClassName = () => {
 		if (error) return errorClassName
 		if (validated) return validatedClassName
@@ -30,6 +32,8 @@ export default function Input({
 	}
 
 	const className = getClassName()
+
+	const [visible, setVisible] = useState<boolean>(false)
 
 	return (
 		<div className='Input w-full flex flex-col items-stretch justify-between mb-6 rounded-md'>
@@ -51,7 +55,7 @@ export default function Input({
 				) : null}
 
 				<input
-					type={type}
+					type={visible ? 'text' : 'password'}
 					value={value}
 					name={name}
 					placeholder={placeholder}
@@ -61,6 +65,18 @@ export default function Input({
 					onClick={onClick}
 					onChange={onChange}
 				/>
+
+				{visible ? (
+					<EyeSlashIcon
+						className='h-6 w-6 pt-0.5 text-slate-400 cursor-pointer absolute right-4 top-8'
+						onClick={() => setVisible(false)}
+					/>
+				) : (
+					<EyeIcon
+						className='h-6 w-6 pt-0.5 text-slate-400 cursor-pointer absolute right-4 top-8'
+						onClick={() => setVisible(true)}
+					/>
+				)}
 			</div>
 		</div>
 	)
