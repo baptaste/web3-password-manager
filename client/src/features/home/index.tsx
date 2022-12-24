@@ -77,6 +77,13 @@ export default function Home({ loggedIn, accessToken }: any) {
 					>
 						Sign In
 					</Link>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
+					<div className='w-full h-40 my-4 bg-yellow-300'></div>
 				</>
 			) : (
 				<>

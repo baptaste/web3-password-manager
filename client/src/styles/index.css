@@ -4,5 +4,6 @@
 @tailwind utilities;
 
 .Layout {
-	height: calc(100vh - 6rem);
+	/* height: calc(100vh - 6rem); */
+	/* padding: 1rem 0; */
 }

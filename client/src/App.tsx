@@ -6,6 +6,8 @@ import axios from 'axios'
 import TabNav from './navigation/TabNav'
 import PrivateRoute from './routes/PrivateRoute'
 import type { IRoute } from './routes/routes.d'
+import { BASE_API_URL } from './common/helpers/constants'
+import HeaderNav from './navigation/HeaderNav'
 
 const Home = lazy(() => import('./features/home'))
 const Login = lazy(() => import('./features/account/Login'))
@@ -21,7 +23,7 @@ function App() {
 	const getAccessToken = async () => {
 		setLoading(true)
 		try {
-			const res = await axios.get('http://localhost:3500/api/auth/refresh', {
+			const res = await axios.get(`${BASE_API_URL}/auth/refresh`, {
 				withCredentials: true
 			})
 
@@ -61,8 +63,9 @@ function App() {
 	}, [loggedIn])
 
 	return (
-		<div className='App w-full h-screen p-4 bg-slate-50 text-slate-900'>
-			<div className='Layout lg:h-full sm:h-2/3 overflow-y-scroll'>
+		<div className='App w-full h-screen flex bg-slate-50 text-slate-900'>
+			<HeaderNav />
+			<div className='Layout flex-1 px-4 py-20 overflow-y-scroll bg-red-500'>
 				<Suspense fallback={<div>loading...</div>}>
 					<Routes>
 						<Route
@@ -71,7 +74,7 @@ function App() {
 						/>
 						<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
 						<Route path='/register' element={<Register />} />
-						<Route path='/dashboard' element={<Dashboard />} />
+						<Route path='/dashboard' element={<Dashboard loggedIn={loggedIn} />} />
 						<Route
 							path='/protected'
 							element={

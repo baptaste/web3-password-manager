@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { HomeIcon, PlusSmallIcon, UserIcon } from '@heroicons/react/24/outline'
-// import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 const links = [
 	{

@@ -37,7 +37,7 @@ export default function Register({ setAccessToken }: any) {
 		setState((state) => ({ ...state, loading: true }))
 
 		try {
-			const res = await axios.post('http://localhost:3500/users/create', {
+			const res = await axios.post(`${BASE_API_URL}/users/create`, {
 				email: state.email,
 				plaintext: state.password
 			})
