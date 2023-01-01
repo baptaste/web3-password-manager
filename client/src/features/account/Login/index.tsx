@@ -83,7 +83,7 @@ export default function Login({ setAccessToken }: any) {
 	}
 
 	return (
-		<div className='Login lg:w-1/2 md:w-full h-full flex flex-col items-center justify-evenly'>
+		<div className='Login w-full lg:w-1/3 h-full flex flex-col items-center justify-evenly'>
 			<h1 className='text-2xl font-bold mb-5'>Log in to APP</h1>
 
 			{state.loading ? (

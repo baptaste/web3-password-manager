@@ -11,12 +11,26 @@ export const authController = {
 	verify: async (req: Request, res: Response) => {
 		const { email, plaintext } = req.body
 
+		if (email.length === 0) {
+			return res
+				.status(401)
+				.json({ success: false, message: 'No email found in request paylaod' })
+		}
+
 		if (plaintext.length === 0) {
-			res.status(400).json({ success: false, message: 'No password found' })
+			return res
+				.status(401)
+				.json({ success: false, message: 'No password found in request paylaod' })
 		}
 
 		const user = await UserService.getByField('email', email, ['passwords']) // TODO remove ['password'] => just for populate test
 		console.log('/auth/verify - user:', user)
+
+		if (!user) {
+			return res
+				.status(401)
+				.json({ success: false, message: 'No user found in db with these credentials' })
+		}
 
 		// delete previous refresh token if exists
 		console.log('/auth/verify - deleting previous refresh token in db...')
@@ -64,7 +78,7 @@ export const authController = {
 		//TODO add Content-Type: application/json in client req headers
 
 		if (req.body.email.length === 0) {
-			return res.status(400).json({ success: false, message: 'No email found' })
+			return res.status(401).json({ success: false, message: 'Email is missing in payload' })
 		}
 
 		const { refresh_token } = req.cookies
@@ -74,14 +88,14 @@ export const authController = {
 		if (!refresh_token) {
 			return res
 				.status(401)
-				.json({ success: false, message: 'No refresh token found in cookies' })
+				.json({ success: false, message: 'Refresh token is missing in cookies' })
 		}
 
 		const user = await UserService.getByField('email', req.body.email)
 
 		if (!user) {
 			return res
-				.status(400)
+				.status(401)
 				.json({ success: false, message: `No user found with email ${req.body.email}` })
 		} else {
 			const verifiedToken = await AuthService.verifyRefreshToken(user._id, refresh_token)
@@ -129,5 +143,24 @@ export const authController = {
 		res.json({ success: true, accessToken: newAccessToken })
 
 		// TODO add refresh token rotation method
+	},
+
+	// Delete user refresh token in db and cookie, access token set to null in client
+	logout: async (req: Request, res: Response) => {
+		const { refresh_token } = req.cookies
+		const { user } = req
+
+		if (!refresh_token || !user) {
+			return res
+				.status(401)
+				.json({ success: false, message: 'Cannot logout user since he is not logged in' })
+		}
+
+		console.log('/auth/logout - deleting previous refresh token in db...')
+		await AuthService.deleteRefreshToken(user._id)
+		console.log('/auth/logout - deleting previous refresh token cookie...')
+		res.clearCookie('refresh_token')
+
+		res.json({ success: true })
 	}
 }

@@ -4,7 +4,7 @@ import SleepingKoalaImg from '../../assets/img/sleeping-koala.jpg'
 
 export default function EmptyScreen() {
 	return (
-		<div className='EmptyScreen w-full h-full flex flex-col items-center justify-between'>
+		<div className='EmptyScreen w-full lg:w-1/3 h-full flex flex-col items-center justify-between'>
 			<h1 className='text-xl font-bold mb-5'>Wow, it's empty here</h1>
 
 			<img

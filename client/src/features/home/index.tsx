@@ -65,8 +65,8 @@ export default function Home({ loggedIn, accessToken }: any) {
 	// }, [loggedIn])
 
 	return (
-		<div className='Home w-full h-full flex flex-col items-center'>
-			<h1 className='text-5xl text-green-500'>Dashboard</h1>
+		<div className='Home w-full lg:w-1/3 h-full flex flex-col items-center'>
+			<h1 className='text-5xl text-green-500'>Home</h1>
 
 			{!loggedIn ? (
 				<>

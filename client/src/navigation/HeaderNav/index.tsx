@@ -7,7 +7,7 @@ export default function HeaderNav() {
 	const goBack = () => navigate(-1)
 
 	return (
-		<div className='w-screen h-16 flex items-center justify-between p-4 bg-slate-50 border-b border-solid border-1 border-slate-300 fixed top-0 left-0'>
+		<div className='HeaderNav w-screen h-16 flex items-center justify-between p-4 bg-slate-50 border-b border-solid border-1 border-slate-300 fixed top-0 left-0'>
 			{pathname !== '/' ? (
 				<button className='GoBack justify-start' onClick={goBack}>
 					<ArrowLeftIcon className='w-6 h-6 text-slate-500' />

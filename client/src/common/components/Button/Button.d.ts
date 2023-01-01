@@ -3,7 +3,7 @@ export declare interface IButtonProps {
 
 	type?: 'button' | 'reset' | 'submit'
 	name?: string
-	theme?: 'primary' | 'secondary' | 'tertiary' | 'quaternary'
+	theme?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'quinary'
 	disabled?: boolean
 	icon?: JSX.Element | null
 

@@ -5,6 +5,7 @@ enum ButtonThemes {
 	secondary = 'bg-orange-500 text-slate-50 border-orange-500',
 	tertiary = 'bg-slate-50 text-orange-500 border-orange-500',
 	quaternary = 'bg-slate-50 text-sky-500 border-sky-500',
+	quinary = 'bg-slate-50 text-slate-500 border-slate-500',
 	disabled = 'bg-slate-200 text-slate-900/10 border-slate-200'
 }
 

@@ -8,6 +8,7 @@ import PrivateRoute from './routes/PrivateRoute'
 import type { IRoute } from './routes/routes.d'
 import { BASE_API_URL } from './common/helpers/constants'
 import HeaderNav from './navigation/HeaderNav'
+import Profile from './features/account/Profile'
 
 const Home = lazy(() => import('./features/home'))
 const Login = lazy(() => import('./features/account/Login'))
@@ -65,7 +66,7 @@ function App() {
 	return (
 		<div className='App w-full h-screen flex bg-slate-50 text-slate-900'>
 			<HeaderNav />
-			<div className='Layout flex-1 px-4 py-20 overflow-y-scroll bg-red-500'>
+			<div className='Layout flex flex-col flex-1 items-center px-4 py-20 overflow-y-scroll bg-slate-50'>
 				<Suspense fallback={<div>loading...</div>}>
 					<Routes>
 						<Route
@@ -75,6 +76,17 @@ function App() {
 						<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
 						<Route path='/register' element={<Register />} />
 						<Route path='/dashboard' element={<Dashboard loggedIn={loggedIn} />} />
+						<Route
+							path='/profile'
+							element={
+								<PrivateRoute redirectTo='/login' isAuthenticated={loggedIn}>
+									<Profile
+										accessToken={accessToken}
+										setAccessToken={setAccessToken}
+									/>
+								</PrivateRoute>
+							}
+						/>
 						<Route
 							path='/protected'
 							element={
@@ -87,7 +99,7 @@ function App() {
 					</Routes>
 				</Suspense>
 			</div>
-			<TabNav />
+			<TabNav loggedIn={loggedIn} />
 		</div>
 	)
 }

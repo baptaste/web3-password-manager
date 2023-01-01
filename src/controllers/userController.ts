@@ -5,19 +5,14 @@ import UserService from '../services/database/UserService'
 
 export const userController = {
 	createUser: async (req: Express.Request, res: Express.Response) => {
-		const { email, plaintextPassword } = req.body
-		console.log(
-			'userController - createUser, email: ',
-			email,
-			'plaintextPassword: ',
-			plaintextPassword
-		)
+		const { email, plaintext } = req.body
+		console.log('userController - createUser, email: ', email, 'plaintext: ', plaintext)
 
 		if (email.length === 0) {
 			return res.status(400).json({ error: 'No email found' })
 		}
 
-		if (plaintextPassword.length === 0) {
+		if (plaintext.length === 0) {
 			return res.status(400).json({ error: 'No password found' })
 		}
 
@@ -25,7 +20,7 @@ export const userController = {
 		const randomStr: string = generateCSPRNG(256)
 
 		// create user master password as a derived key, used to encrypt data encryption key
-		const masterPasswordHash = await hash(plaintextPassword)
+		const masterPasswordHash = await hash(plaintext)
 
 		if (masterPasswordHash) {
 			// create user password key, used to encrypt users data encryption key
