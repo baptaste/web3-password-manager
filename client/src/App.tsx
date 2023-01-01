@@ -1,45 +1,105 @@
-import { useEffect, useRef, useState } from 'react'
-import Register from './features/account/Register'
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import Home from './components/Home'
-import Login from './features/account/Login'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+
+import axios from 'axios'
+import TabNav from './navigation/TabNav'
+import PrivateRoute from './routes/PrivateRoute'
+import type { IRoute } from './routes/routes.d'
+import { BASE_API_URL } from './common/helpers/constants'
+import HeaderNav from './navigation/HeaderNav'
+import Profile from './features/account/Profile'
+
+const Home = lazy(() => import('./features/home'))
+const Login = lazy(() => import('./features/account/Login'))
+const Register = lazy(() => import('./features/account/Register'))
+const Dashboard = lazy(() => import('./features/dashboard'))
 
 function App() {
+	const [accessToken, setAccessToken] = useState<string | null>(null)
 	const [loggedIn, setLoggedIn] = useState<boolean>(false)
-	// const navigate = useNavigate()
+	const [loading, setLoading] = useState<boolean>(false)
+	const navigate = useNavigate()
 
-	// async function getPasswordsCount() {
-	// 	const res = await axios.get('http://localhost:3500/password-count')
-	// 	console.log('CLIENT - getPasswordsCount res:', res)
-	// 	setPasswordCount(res.data.passwordCount)
-	// }
+	const getAccessToken = async () => {
+		setLoading(true)
+		try {
+			const res = await axios.get(`${BASE_API_URL}/auth/refresh`, {
+				withCredentials: true
+			})
 
-	// async function getAllPasswords() {
-	// 	const res = await axios.get('http://localhost:3500/passwords')
-	// 	console.log('CLIENT - getAllPasswords res:', res.data.passwords)
-	// }
+			if (res && res.data.success) {
+				console.log('--------- getAccessToken res:', res)
+				setLoading(false)
+				setAccessToken(res.data.accessToken)
+			}
+		} catch (err: any) {
+			setLoading(false)
+			console.log(err.response.status, err.response.data.message)
 
-	// useEffect(() => {
-	// 	// getPasswordsCount()
-	// 	// getAllPasswords()
+			// user doesnt have refresh token in cookie or has one expired
+			// redirect to login so he can have new one if he already have an account
+			if (err.response.status === 401 || err.response.status === 403) {
+				navigate('/login')
+			}
+		}
+	}
 
-	// 	if (!loggedIn) {
-	// 		navigate('/auth/login')
-	// 	}
-	// }, [loggedIn])
+	useEffect(() => {
+		console.log('call getAccessToken...')
+		getAccessToken()
+	}, [])
+
+	useEffect(() => {
+		if (accessToken) {
+			setLoggedIn(true)
+		} else {
+			setLoggedIn(false)
+		}
+	}, [accessToken])
+
+	useEffect(() => {
+		console.log('App - logged in change:', loggedIn)
+		if (loggedIn) navigate('/')
+	}, [loggedIn])
 
 	return (
-		<div className='App w-full h-screen flex flex-col items-center px-4 bg-slate-900 text-slate-100'>
-			<Router>
-				<Routes>
-					<Route path='/' element={loggedIn ? <Home /> : <Login />} />
-					<Route path='/login' element={loggedIn ? <Navigate to='/' replace /> : <Login setLoggedIn={setLoggedIn} />} />
-					<Route path='/register' element={loggedIn ? <Navigate to='/' replace /> : <Register />} />
-
-					{/* catch all route */}
-					<Route path='*' element={<Navigate to='/' replace />} />
-				</Routes>
-			</Router>
+		<div className='App w-full h-screen flex bg-slate-50 text-slate-900'>
+			<HeaderNav />
+			<div className='Layout flex flex-col flex-1 items-center px-4 py-20 overflow-y-scroll bg-slate-50'>
+				<Suspense fallback={<div>loading...</div>}>
+					<Routes>
+						<Route
+							path='/'
+							element={<Home loggedIn={loggedIn} accessToken={accessToken} />}
+						/>
+						<Route path='/login' element={<Login setAccessToken={setAccessToken} />} />
+						<Route path='/register' element={<Register />} />
+						<Route path='/dashboard' element={<Dashboard loggedIn={loggedIn} />} />
+						<Route
+							path='/profile'
+							element={
+								<PrivateRoute redirectTo='/login' isAuthenticated={loggedIn}>
+									<Profile
+										accessToken={accessToken}
+										setAccessToken={setAccessToken}
+									/>
+								</PrivateRoute>
+							}
+						/>
+						<Route
+							path='/protected'
+							element={
+								<PrivateRoute redirectTo='/login' isAuthenticated={loggedIn}>
+									<div>Todo</div>
+								</PrivateRoute>
+							}
+						/>
+						<Route path='*' element={<Navigate to='/' replace />} />
+					</Routes>
+				</Suspense>
+			</div>
+			<TabNav loggedIn={loggedIn} />
 		</div>
 	)
 }

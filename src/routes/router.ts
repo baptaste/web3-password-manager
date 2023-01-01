@@ -33,6 +33,7 @@ router.post(`${routerEndpoints.users}/create`, userController.createUser)
 // Post
 router.post(`${routerEndpoints.auth}/verify`, authController.verify)
 router.post(`${routerEndpoints.auth}/login`, authController.login)
+router.get(`${routerEndpoints.auth}/logout`, handleAuth, authController.logout)
 router.get(`${routerEndpoints.auth}/refresh`, handleAuth, authController.refresh)
 
 //////////////////////

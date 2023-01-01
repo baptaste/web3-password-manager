@@ -46,11 +46,12 @@ export const handleAuth = (req: Request, res: Response, next: NextFunction) => {
 
 	const needAccess: boolean = accessTokenRoutes.includes(req.route.path)
 	const needRefresh: boolean = req.route.path === '/api/auth/refresh'
+	const needLogout: boolean = req.route.path === '/api/auth/logout'
 
 	if (needAccess) {
 		const authHeader = req.headers['authorization']
 		token = authHeader ? authHeader?.split(' ')[1] : null
-	} else if (needRefresh) {
+	} else if (needRefresh || needLogout) {
 		token = req.cookies.refresh_token
 	}
 

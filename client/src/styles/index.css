@@ -1,0 +1,9 @@
+@import './reset.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.Layout {
+	/* height: calc(100vh - 6rem); */
+	/* padding: 1rem 0; */
+}
