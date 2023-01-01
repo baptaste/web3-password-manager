@@ -6,7 +6,7 @@ import axios from 'axios'
 import TabNav from './navigation/TabNav'
 import PrivateRoute from './routes/PrivateRoute'
 import type { IRoute } from './routes/routes.d'
-import { BASE_API_URL } from './common/helpers/constants'
+import { BASE_API_URL } from './constants'
 import HeaderNav from './navigation/HeaderNav'
 import Profile from './features/account/Profile'
 

@@ -1,4 +1,4 @@
-import type { IButtonProps } from './Button.d'
+import type { IButtonProps } from './Button'
 
 enum ButtonThemes {
 	primary = 'bg-sky-500 text-slate-50 border-sky-500',

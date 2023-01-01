@@ -1,6 +1,6 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import type { IInputPasswordProps } from './InputPassword.d'
+import type { IInputPasswordProps } from './InputPassword'
 
 const defaultClassName = 'w-full rounded-md px-4 py-8 text-lg text-slate-900 bg-transparent'
 

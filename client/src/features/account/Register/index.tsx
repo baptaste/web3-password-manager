@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import axios from 'axios'
-import { BASE_API_URL } from '../../../common/helpers/constants'
-import Button from '../../../common/components/Button'
-import Input from '../../../common/components/Inputs/Input'
-import InputPassword from '../../../common/components/Inputs/InputPassword'
+import Button from '../../../components/common/buttons/Button'
+import Input from '../../../components/common/inputs/Input'
+import InputPassword from '../../../components/common/inputs/InputPassword'
+import { register } from '../../../api/register'
 
 interface IRegisterState {
 	[key: string]: string | boolean
@@ -36,20 +35,12 @@ export default function Register({ setAccessToken }: any) {
 
 		setState((state) => ({ ...state, loading: true }))
 
-		try {
-			const res = await axios.post(`${BASE_API_URL}/users/create`, {
-				email: state.email,
-				plaintext: state.password
-			})
-			console.log('Register res:', res)
+		const { success, error } = await register(state.email, state.password)
 
-			if (res.data.success) {
-				console.log('Register - success, user:', res.data.user)
-				setState((state) => ({ ...state, loading: false }))
-				navigate('/login')
-			}
-		} catch (error: any) {
-			console.error(error)
+		if (success) {
+			setState((state) => ({ ...state, loading: false }))
+			navigate('/login')
+		} else if (error) {
 			if (error.response.status === 401) {
 				setState((state) => ({
 					...state,

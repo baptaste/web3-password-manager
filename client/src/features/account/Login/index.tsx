@@ -1,11 +1,10 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import axios from 'axios'
-import { BASE_API_URL } from '../../../common/helpers/constants'
-import Button from '../../../common/components/Button'
-import Input from '../../../common/components/Inputs/Input'
-import InputPassword from '../../../common/components/Inputs/InputPassword'
+import Button from '../../../components/common/buttons/Button'
+import Input from '../../../components/common/inputs/Input'
+import InputPassword from '../../../components/common/inputs/InputPassword'
+import { login } from '../../../api/login'
 
 interface ILoginState {
 	[key: string]: string | boolean
@@ -36,41 +35,13 @@ export default function Login({ setAccessToken }: any) {
 
 		setState((state) => ({ ...state, loading: true }))
 
-		try {
-			const verifyRes = await axios.post(
-				`${BASE_API_URL}/auth/verify`,
-				{
-					email: state.email,
-					plaintext: state.password
-				},
-				{ withCredentials: true }
-			)
-			console.log('1 - verify email & password, res:', verifyRes)
+		const { success, token, error } = await login(state.email, state.password)
 
-			if (verifyRes.data.success) {
-				try {
-					console.log('Login - authenticated, requesting refresh token...')
-
-					const loginRes: any = await axios.post(
-						`${BASE_API_URL}/auth/login`,
-						{ email: state.email },
-						{ withCredentials: true }
-					)
-					console.log('2 - login, res:', loginRes)
-
-					if (loginRes.data.success) {
-						setState((state) => ({ ...state, loading: false }))
-						const { accessToken } = loginRes.data
-						console.log('2- after login, accessToken:', accessToken)
-						setAccessToken((prev: any) => (prev = accessToken))
-						navigate('/')
-					}
-				} catch (error) {
-					console.error(error)
-				}
-			}
-		} catch (error: any) {
-			console.error(error)
+		if (success) {
+			setState((state) => ({ ...state, loading: false }))
+			setAccessToken((prev: any) => (prev = token))
+			navigate('/')
+		} else if (error) {
 			if (error.response.status === 401) {
 				setState((state) => ({
 					...state,
