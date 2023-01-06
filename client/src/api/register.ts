@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_API_URL } from '../constants'
+import { BASE_API_URL } from '../config'
 
 export const register = async (
 	email: string,

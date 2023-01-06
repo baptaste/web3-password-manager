@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import CreatePassword from '../passwords/CreatePassword'
 import RetreivePassword from '../passwords/RetreivePassword'
 
-export default function Home({ loggedIn, accessToken }: any) {
+export default function HomePage({ loggedIn, accessToken }: any) {
 	const [retreivedPassword, setRetreivedPassword] = useState<string>('')
 	const [passwordCount, setPasswordCount] = useState<number>(0)
 	const passwordNameRef = useRef()

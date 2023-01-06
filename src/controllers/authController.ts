@@ -64,6 +64,12 @@ export const authController = {
 								console.error('authController - createRefreshToken error:', err)
 								res.status(400).json({ success: false, verified, message: err })
 							})
+					} else {
+						res.status(200).json({
+							success: false,
+							verified: false,
+							message: 'Invalid credentials'
+						})
 					}
 				})
 				.catch((err) => {

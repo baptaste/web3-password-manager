@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_API_URL } from '../constants'
+import { BASE_API_URL } from '../config'
 
 export const login = async (
 	email: string,
@@ -35,7 +35,7 @@ export const login = async (
 						})
 				} else {
 					console.log('api - verify failed:', res.data.message)
-					resolve({ success: false, token: null })
+					return resolve({ success: false, token: null, error: res.data.message })
 				}
 			})
 			.catch((err) => {

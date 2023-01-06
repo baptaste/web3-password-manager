@@ -45,10 +45,12 @@ class UserService {
 			console.log('UserService - verify master password with plaintext:', plaintext)
 			verify(hash, plaintext)
 				.then((match) => {
+					console.log('UserService - verify master password, match:', match)
 					if (match === true) {
 						console.log('UserService - verify master password success:', match)
 						resolve(true)
 					} else {
+						console.log('UserService - verify master password failed')
 						resolve(false)
 					}
 				})
