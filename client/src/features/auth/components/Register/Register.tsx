@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import { Button } from '../../components/Common/Button'
-import { Input } from '../../components/Form/Input'
-import { InputPassword } from '../../components/Form/InputPassword'
-import { register } from '../../api/register'
+import { Button } from '../../../../components/Common/Button'
+import { Input } from '../../../../components/Form/Input'
+import { InputPassword } from '../../../../components/Form/InputPassword'
+import { register } from '../../api'
+import { Spinner } from '../../../../components/Common'
 
 interface IRegisterState {
 	[key: string]: string | boolean
@@ -15,7 +16,7 @@ interface IRegisterState {
 	errorMsg: string
 }
 
-export default function RegisterPage({ setAccessToken }: any) {
+export function Register() {
 	const navigate = useNavigate()
 
 	const [state, setState] = useState<IRegisterState>({
@@ -57,10 +58,7 @@ export default function RegisterPage({ setAccessToken }: any) {
 			<h1 className='text-2xl font-bold mb-5'>Welcome friend!</h1>
 
 			{state.loading ? (
-				<>
-					<p className='text-xl'>Loading...</p>
-					<p className='text-xl'>Creating account</p>
-				</>
+				<Spinner />
 			) : (
 				<>
 					<div className='text-lg'>
@@ -72,7 +70,7 @@ export default function RegisterPage({ setAccessToken }: any) {
 
 					<form
 						onSubmit={handleSubmit}
-						className='CreatePasswordForm w-full my-4 flex flex-col items-center justify-evenly'
+						className='w-full my-4 flex flex-col items-center justify-evenly'
 					>
 						{state.errorMsg?.length ? (
 							<p className='w-full text-center text-red-500 text-md my-4'>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BASE_API_URL } from '../config'
+import { BASE_API_URL } from '../../../config'
 
 export const getAccessToken = async (): Promise<{
 	success: boolean

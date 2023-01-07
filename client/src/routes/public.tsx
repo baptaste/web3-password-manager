@@ -1,14 +1,14 @@
-import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { lazyImport } from '../utils/imports'
 
-const LoginPage = lazy(() => import('../features/login'))
-const RegisterPage = lazy(() => import('../features/register'))
+const Login = lazyImport('../features/auth', 'Login')
+const Register = lazyImport('../features/auth', 'Register')
 
 function PublicRoutes() {
 	return (
 		<Routes>
-			<Route path='login' element={<LoginPage />} />
-			<Route path='register' element={<RegisterPage />} />
+			<Route path='login' element={<Login />} />
+			<Route path='register' element={<Register />} />
 		</Routes>
 	)
 }
