@@ -22,7 +22,7 @@ export default function TabNav() {
 		},
 		{
 			path: loggedIn ? '/profile' : '/auth/login',
-			name: loggedIn ? 'ProfilePage' : 'LoginPage',
+			name: loggedIn ? 'ProfilePage' : 'Login',
 			icon: <UserIcon className='w-8 h-8 text-sky-500' />,
 			containerClass: 'w-14 h-14 flex justify-center items-center'
 		}

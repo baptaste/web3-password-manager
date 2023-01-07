@@ -1,11 +1,12 @@
-import { lazy, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Navigate, useNavigate, useRoutes } from 'react-router-dom'
 import { MainLayout } from '../components/Layout'
 import { useAuth } from '../providers/auth'
+import { lazyImport } from '../utils/imports'
 import { protectedRoutes } from './protected'
 import { publicRoutes } from './public'
 
-const HomePage = lazy(() => import('../features/home'))
+const HomePage = lazyImport('../features/home', 'HomePage')
 
 export function AppRoutes() {
 	const navigate = useNavigate()
@@ -32,6 +33,10 @@ export function AppRoutes() {
 			}
 		}
 	}, [error])
+
+	useEffect(() => {
+		if (!loggedIn) navigate('/auth/login')
+	}, [loggedIn])
 
 	return <MainLayout>{elements}</MainLayout>
 }

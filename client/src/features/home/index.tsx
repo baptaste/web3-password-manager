@@ -1,10 +1,12 @@
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../providers/auth'
 import CreatePassword from '../passwords/CreatePassword'
 import RetreivePassword from '../passwords/RetreivePassword'
 
-export default function HomePage({ loggedIn, accessToken }: any) {
+export function HomePage() {
+	const { loggedIn } = useAuth()
 	const [retreivedPassword, setRetreivedPassword] = useState<string>('')
 	const [passwordCount, setPasswordCount] = useState<number>(0)
 	const passwordNameRef = useRef()
@@ -88,8 +90,8 @@ export default function HomePage({ loggedIn, accessToken }: any) {
 			) : (
 				<>
 					<h2 className='w-2/3 text-green-500 text-center'>Welcome back friend!</h2>
-					<h2 className='w-2/3 text-green-500 text-center'>accessToken:</h2>
-					<h3 className='w-full text-center break-all'>{accessToken}</h3>
+					{/* <h2 className='w-2/3 text-green-500 text-center'>accessToken:</h2>
+					<h3 className='w-full text-center break-all'>{accessToken}</h3> */}
 				</>
 			)}
 

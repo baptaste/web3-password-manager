@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react'
-import { getAccessToken } from '../api/refresh'
+import { getAccessToken } from '../features/auth/api'
 
 interface IAuthContext {
 	accessToken: string | null

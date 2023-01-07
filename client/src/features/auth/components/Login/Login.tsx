@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, redirect, Link } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import { Button } from '../../components/Common/Button'
-import { Input } from '../../components/Form/Input'
-import { InputPassword } from '../../components/Form/InputPassword'
-import { login } from '../../api/login'
-import { useAuth } from '../../providers/auth'
+import { Button } from '../../../../components/Common/Button'
+import { Input } from '../../../../components/Form/Input'
+import { InputPassword } from '../../../../components/Form/InputPassword'
+import { login } from '../../api'
+import { useAuth } from '../../../../providers/auth'
+import { Spinner } from '../../../../components/Common'
 
 interface ILoginState {
 	[key: string]: string | boolean
@@ -16,7 +17,7 @@ interface ILoginState {
 	errorMsg: string
 }
 
-export default function LoginPage() {
+export function Login() {
 	const { setAccessToken } = useAuth()
 	const navigate = useNavigate()
 
@@ -39,6 +40,8 @@ export default function LoginPage() {
 
 		const { success, token, error } = await login(state.email, state.password)
 
+		console.log('Login - error:', error)
+
 		if (success && token) {
 			setState((state) => ({ ...state, loading: false }))
 			setAccessToken(token)
@@ -46,6 +49,8 @@ export default function LoginPage() {
 		}
 
 		if (error) {
+			console.log('Login - error:', error)
+
 			return setState((state) => ({
 				...state,
 				loading: false,
@@ -57,13 +62,11 @@ export default function LoginPage() {
 
 	return (
 		<div className='Login w-full lg:w-1/3 h-full flex flex-col items-center justify-evenly'>
-			<h1 className='text-2xl font-bold mb-5'>Log in to APP</h1>
+			<h1 className='text-2xl font-bold'>Welcome back!</h1>
+			<h1 className='text-2xl font-bold mb-5'>Log in</h1>
 
 			{state.loading ? (
-				<>
-					<p className='text-xl'>Loading...</p>
-					<p className='text-xl'>Verifying account</p>
-				</>
+				<Spinner />
 			) : (
 				<>
 					<div className='text-lg'>
@@ -75,7 +78,7 @@ export default function LoginPage() {
 
 					<form
 						onSubmit={handleSubmit}
-						className='CreatePasswordForm w-full my-4 flex flex-col items-center justify-evenly'
+						className='w-full my-4 flex flex-col items-center justify-evenly'
 					>
 						{state.errorMsg?.length ? (
 							<p className='w-full text-center text-red-500 text-md my-4'>
