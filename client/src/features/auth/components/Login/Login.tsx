@@ -7,6 +7,7 @@ import { InputPassword } from '../../../../components/Form/InputPassword'
 import { login } from '../../api'
 import { useAuth } from '../../../../providers/auth'
 import { Spinner } from '../../../../components/Common'
+import { VisiterLayout } from '../../../../components/Layout'
 
 interface ILoginState {
 	[key: string]: string | boolean
@@ -61,7 +62,7 @@ export function Login() {
 	}
 
 	return (
-		<div className='Login w-full lg:w-1/3 h-full flex flex-col items-center justify-evenly'>
+		<VisiterLayout title='Log in'>
 			<h1 className='text-2xl font-bold'>Welcome back!</h1>
 			<h1 className='text-2xl font-bold mb-5'>Log in</h1>
 
@@ -107,10 +108,11 @@ export function Login() {
 							text='Log in'
 							type='submit'
 							disabled={!state.email.length || !state.password.length || state.error}
+							theme='secondary'
 						/>
 					</form>
 				</>
 			)}
-		</div>
+		</VisiterLayout>
 	)
 }

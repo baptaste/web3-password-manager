@@ -6,6 +6,7 @@ import { Input } from '../../../../components/Form/Input'
 import { InputPassword } from '../../../../components/Form/InputPassword'
 import { register } from '../../api'
 import { Spinner } from '../../../../components/Common'
+import { VisiterLayout } from '../../../../components/Layout'
 
 interface IRegisterState {
 	[key: string]: string | boolean
@@ -54,7 +55,7 @@ export function Register() {
 	}
 
 	return (
-		<div className='Register w-full lg:w-1/3 h-full flex flex-col items-center justify-evenly'>
+		<VisiterLayout title='Create Account'>
 			<h1 className='text-2xl font-bold mb-5'>Welcome friend!</h1>
 
 			{state.loading ? (
@@ -103,6 +104,6 @@ export function Register() {
 					</form>
 				</>
 			)}
-		</div>
+		</VisiterLayout>
 	)
 }

@@ -1,14 +1,14 @@
-export declare interface IButtonProps {
+export declare interface ICustomLinkProps {
+	path: string
 	text: string
 
-	type?: 'button' | 'reset' | 'submit'
-	name?: string
+	classes?: string
+
 	theme?: 'primary' | 'secondary' | 'tertiary'
 	disabled?: boolean
 	icon?: JSX.Element | null
 
 	onClick?: ((e?: React.MouseEvent) => void) | undefined
-	onSubmit?: ((e: FormEvent<HTMLFormElement>) => void) | undefined
 	onMouseEnter?: (e: React.MouseEvent) => void
 	onMouseLeave?: (e: React.MouseEvent) => void
 }

@@ -3,7 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-.Layout {
-	/* height: calc(100vh - 6rem); */
-	/* padding: 1rem 0; */
+@layer utilities {
+	.neon-blur {
+		text-shadow: 0 0 64px rgb(192 219 255 / 48%), 0 0 16px rgb(65 120 255 / 24%);
+		color: rgba(255, 255, 255, 0.96);
+	}
 }

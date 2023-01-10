@@ -1,14 +1,12 @@
-import { lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { lazyImport } from '../utils/imports'
 
-const DashboardPage = lazy(() => import('../features/dashboard'))
-const ProfilePage = lazy(() => import('../features/profile'))
+const Dashboard = lazyImport('../features/dashboard', 'Dashboard')
 
 function ProtectedRoutes() {
 	return (
 		<Routes>
-			<Route path='dashboard' element={<DashboardPage />} />
-			<Route path='profile' element={<ProfilePage />} />
+			<Route path='dashboard' element={<Dashboard />} />
 		</Routes>
 	)
 }
