@@ -5,6 +5,8 @@ interface IAuthContext {
 	accessToken: string | null
 	setAccessToken: (data: string | null) => void
 	loggedIn: boolean
+	user: any
+	setUser: (data: any) => void
 	error: any
 	isLoading: boolean
 }
@@ -13,6 +15,7 @@ const AuthContext = createContext<IAuthContext>({} as IAuthContext)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [accessToken, setAccessToken] = useState<string | null>(null)
+	const [user, setUser] = useState<any>({})
 	const [error, setError] = useState<any>(null)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -21,8 +24,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		setIsLoading(true)
 
 		getAccessToken()
-			.then(({ token }) => {
+			.then(({ token, user }) => {
 				setAccessToken(token)
+				setUser(user)
 			})
 			.catch((err) => {
 				console.error('getAccessToken err:', err)
@@ -38,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const authValue = useMemo(() => {
 		const loggedIn = accessToken !== null
-		return { accessToken, setAccessToken, loggedIn, error, isLoading }
+		return { accessToken, setAccessToken, loggedIn, user, setUser, error, isLoading }
 	}, [accessToken, setAccessToken, error, isLoading])
 
 	return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>

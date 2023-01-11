@@ -19,7 +19,7 @@ interface ILoginState {
 }
 
 export function Login() {
-	const { setAccessToken } = useAuth()
+	const { setAccessToken, setUser } = useAuth()
 	const navigate = useNavigate()
 
 	const [state, setState] = useState<ILoginState>({
@@ -39,13 +39,14 @@ export function Login() {
 
 		setState((state) => ({ ...state, loading: true }))
 
-		const { success, token, error } = await login(state.email, state.password)
+		const { success, user, token, error } = await login(state.email, state.password)
 
-		console.log('Login - error:', error)
+		console.log('Login - user:', user)
 
 		if (success && token) {
 			setState((state) => ({ ...state, loading: false }))
 			setAccessToken(token)
+			setUser(user)
 			return navigate('/')
 		}
 

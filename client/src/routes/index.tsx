@@ -11,7 +11,7 @@ const Landing = lazyImport('../features/landing', 'Landing')
 export function AppRoutes() {
 	const navigate = useNavigate()
 
-	const { loggedIn, error } = useAuth()
+	const { loggedIn, error, accessToken, user } = useAuth()
 
 	const commonRoutes = [
 		{ path: '/', element: <Landing /> },
@@ -35,12 +35,16 @@ export function AppRoutes() {
 	// }, [error])
 
 	useEffect(() => {
-		// if (!loggedIn) {
-		// 	navigate('/auth/login')
-		// } else {
-		// 	navigate('/dashboard')
-		// }
-		if (loggedIn) navigate('/dashboard')
+		console.log('route index - loggedIn:', loggedIn)
+		console.log('route index - accessToken:', accessToken)
+		console.log('route index - user:', user)
+
+		if (!loggedIn) {
+			navigate('/auth/login')
+		} else {
+			navigate('/dashboard')
+		}
+		// if (loggedIn) navigate('/dashboard')
 	}, [loggedIn])
 
 	return <>{elements}</>

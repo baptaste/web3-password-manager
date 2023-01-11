@@ -18,11 +18,7 @@ export function Landing() {
 					incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
 					nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</p>
-				<CustomLink
-					path='/auth/login'
-					text='Start uploading data now'
-					theme={'secondary'}
-				/>
+				<CustomLink path='/auth/login' text='Store data now' theme={'secondary'} />
 			</div>
 		</VisiterLayout>
 	)

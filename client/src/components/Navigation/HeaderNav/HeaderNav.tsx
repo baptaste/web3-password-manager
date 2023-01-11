@@ -11,7 +11,6 @@ export function HeaderNav({ title, showSettings = false }: IHeaderNavProps) {
 	const navigate = useNavigate()
 	const location = useLocation()
 	const goBack = () => navigate(-1)
-	console.log('location state:', location.state)
 
 	return (
 		<div className='HeaderNav fixed top-0 left-0 w-screen h-16 flex items-center justify-between p-4 border-b border-solid border-1 border-zinc-300 dark:border-zinc-800'>

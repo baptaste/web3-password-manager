@@ -4,7 +4,7 @@ import { BASE_API_URL } from '../../../config'
 export const login = async (
 	email: string,
 	password: string
-): Promise<{ success: boolean; token: null | string; error?: any }> => {
+): Promise<{ success: boolean; user?: any; token: null | string; error?: any }> => {
 	return new Promise((resolve, reject) => {
 		axios
 			.post(
@@ -23,7 +23,11 @@ export const login = async (
 						.then((res) => {
 							if (res.data.success) {
 								console.log('api - login success:', res.data.success)
-								resolve({ success: true, token: res.data.accessToken })
+								resolve({
+									success: true,
+									user: res.data.user,
+									token: res.data.accessToken
+								})
 							} else {
 								console.log('api - login failed:', res.data.message)
 								resolve({ success: false, token: null })

@@ -9,9 +9,9 @@ export function TabNav() {
 		{
 			path: '/dashboard',
 			name: 'Dashboard',
-			icon: <HomeIcon className='w-8 h-8 text-sky-500' />,
+			icon: <HomeIcon className='w-8 h-8 text-zinc-50' />,
 			containerClass: 'w-14 h-14 flex justify-center items-center'
-		},
+		}
 		// {
 		// 	path: loggedIn ? '/dashboard' : '/auth/login',
 		// 	name: loggedIn ? 'Dashboard' : 'Login',
@@ -20,15 +20,15 @@ export function TabNav() {
 		// 		window.innerWidth / 2
 		// 	}]`
 		// },
-		{
-			// path: loggedIn ? '/profile' : '/auth/login',
-			path: null,
-			// name: loggedIn ? 'ProfilePage' : 'Login',
-			name: null,
-			// icon: <UserIcon className='w-8 h-8 text-sky-500' />,
-			icon: null,
-			containerClass: 'w-14 h-14 flex justify-center items-center'
-		}
+		// {
+		// 	// path: loggedIn ? '/profile' : '/auth/login',
+		// 	path: null,
+		// 	// name: loggedIn ? 'ProfilePage' : 'Login',
+		// 	name: null,
+		// 	// icon: <UserIcon className='w-8 h-8 text-sky-500' />,
+		// 	icon: null,
+		// 	containerClass: 'w-14 h-14 flex justify-center items-center'
+		// }
 	]
 
 	return (
