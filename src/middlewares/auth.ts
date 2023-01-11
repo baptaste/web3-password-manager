@@ -41,8 +41,13 @@ const sendAuthResult = (
 export const handleAuth = (req: Request, res: Response, next: NextFunction) => {
 	let secretKey: string = ''
 	let token: string | null = null
+	console.log('handleAuth - req.route.path:', req.route.path)
 
-	const accessTokenRoutes: string[] = ['/api/users/:id', '/api/users/create']
+	const accessTokenRoutes: string[] = [
+		'/api/users/:id',
+		'/api/users/create',
+		'/api/passwords/:userId'
+	]
 
 	const needAccess: boolean = accessTokenRoutes.includes(req.route.path)
 	const needRefresh: boolean = req.route.path === '/api/auth/refresh'
@@ -50,10 +55,14 @@ export const handleAuth = (req: Request, res: Response, next: NextFunction) => {
 
 	if (needAccess) {
 		const authHeader = req.headers['authorization']
+
 		token = authHeader ? authHeader?.split(' ')[1] : null
+		console.log('handleAuth - authHeader:', authHeader?.split(' ')[1])
 	} else if (needRefresh || needLogout) {
 		token = req.cookies.refresh_token
 	}
+
+	console.log('handleAuth - token:', token)
 
 	if (token === null) {
 		if (process.env.NODE_ENV === 'production') return res.sendStatus(401)

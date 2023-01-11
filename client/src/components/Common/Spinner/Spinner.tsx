@@ -1,9 +1,17 @@
-export function Spinner() {
+type Size = 'small' | 'medium' | 'large'
+
+export function Spinner({ size = 'medium' }: { size?: Size }) {
+	let renderedSize: string = ''
+
+	if (size === 'small') renderedSize = 'w-6 h-6'
+	else if (size === 'medium') renderedSize = 'w-10 h-10'
+	else if (size === 'large') renderedSize = 'w-14 h-14'
+
 	return (
-		<div role='status' className='Spinner my-5'>
+		<div role='status' className='Spinner flex justify-center'>
 			<svg
 				aria-hidden='true'
-				className='w-8 h-8 text-zinc-500 animate-spin border-none dark:text-zinc-500 fill-slate-50'
+				className={`${renderedSize} text-zinc-500 animate-spin border-none dark:text-zinc-500 fill-slate-50`}
 				viewBox='0 0 100 101'
 				fill='none'
 				xmlns='http://www.w3.org/2000/svg'

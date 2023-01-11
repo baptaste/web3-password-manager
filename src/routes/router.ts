@@ -45,6 +45,10 @@ router.get(`${routerEndpoints.passwords}/:userId`, passwordController.getAll)
 router.get(`${routerEndpoints.passwords}/count`, passwordController.getCount)
 // Post
 router.post(`${routerEndpoints.passwords}/create`, passwordController.createPassword)
-router.post(`${routerEndpoints.passwords}/retreive`, passwordController.retreivePassword)
+router.post(
+	`${routerEndpoints.passwords}/retreive`,
+
+	passwordController.retreivePassword
+)
 
 export default router

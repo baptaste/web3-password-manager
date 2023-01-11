@@ -6,9 +6,10 @@ export const retreivePassword = async (
 	encryptionId: string
 ): Promise<{
 	success: boolean
-	decrypted: any
+	decrypted: string
 	error?: any
 }> => {
+	console.log('retreivePassword called')
 	return new Promise((resolve, reject) => {
 		axios
 			.post(
